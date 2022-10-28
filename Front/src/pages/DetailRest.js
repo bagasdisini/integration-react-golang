@@ -11,10 +11,10 @@ import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { useMutation } from "react-query";
 import { API } from "../config/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "react-query";
 
 function Detail({ addItem }) {
-
   const navigate = useNavigate();
 
   const [state, dispatch] = useContext(UserContext);
@@ -108,6 +108,13 @@ function Detail({ addItem }) {
   const handleShow = () => setShow(true);
   const handleClose1 = () => setShow1(false);
   const handleShow1 = () => setShow1(true);
+
+  let { id } = useParams();
+  let { data: products } = useQuery("productsCache", async () => {
+    const response = await API.get("/products");
+    const response2 = response.data.data.filter((p) => p.admin_id == id);
+    return response2;
+  });
 
   return (
     <div>
@@ -291,61 +298,68 @@ function Detail({ addItem }) {
         style={{ marginTop: "10px" }}
       >
         <div className="m-5" style={{ width: "70%" }}>
-          <h2 className="fw-bold mb-4">Geprek Bensu, Menus</h2>
-
-          {state.isLogin ?(
-          <div className="d-flex justify-content-evenly flex-wrap">
-            {Foods.map((p) => (
-              <Card style={{ width: "14rem" }} className="p-2 mb-3" key={p.id}>
-                <Card.Img variant="top" src={p.image} />
-                <Card.Body className="py-3 px-1">
-                  <Card.Title className="fs-6">{p.name}</Card.Title>
-                  <Card.Text className="text-danger">{p.price1}</Card.Text>
-                  <Button
-                    style={{
-                      marginBottom: "-10px",
-                      width: "100%",
-                      backgroundColor: "#FFC700",
-                      border: "none",
-                    }}
-                    className="py-1 text-dark"
-                    onClick={() => {
-                      addItem(p);
-                      showToastMessage();
-                    }}
-                  >
-                    Order
-                  </Button>
-                </Card.Body>
-              </Card>
-            ))}
-          </div>
+          <h2 className="fw-bold mb-4">Menu</h2>
+          {state.isLogin ? (
+            <div className="d-flex justify-content-evenly flex-wrap">
+              {products?.map((p) => (
+                <Card
+                  style={{ width: "14rem" }}
+                  className="p-2 mb-3"
+                  key={p.id}
+                >
+                  <Card.Img variant="top" src={p.image} />
+                  <Card.Body className="py-3 px-1">
+                    <Card.Title className="fs-6">{p.title}</Card.Title>
+                    <Card.Text className="text-danger">{p.price}</Card.Text>
+                    <Button
+                      style={{
+                        marginBottom: "-10px",
+                        width: "100%",
+                        backgroundColor: "#FFC700",
+                        border: "none",
+                      }}
+                      className="py-1 text-dark"
+                      onClick={() => {
+                        addItem(p);
+                        showToastMessage();
+                      }}
+                    >
+                      Order
+                    </Button>
+                  </Card.Body>
+                </Card>
+              ))}
+            </div>
           ) : (
             <div className="d-flex justify-content-evenly flex-wrap">
-            {Foods.map((p) => (
-              <Card style={{ width: "14rem" }} className="p-2 mb-3" key={p.id}>
-                <Card.Img variant="top" src={p.image} />
-                <Card.Body className="py-3 px-1">
-                  <Card.Title className="fs-6">{p.name}</Card.Title>
-                  <Card.Text className="text-danger">{p.price1}</Card.Text>
-                  <Button
-                    style={{
-                      marginBottom: "-10px",
-                      width: "100%",
-                      backgroundColor: "#FFC700",
-                      border: "none",
-                    }}
-                    className="py-1 text-dark"
-                    onClick={() => {
-                      handleShow();
-                    }}
-                  >
-                    Order
-                  </Button>
-                </Card.Body>
-              </Card>
-            ))}
-          </div>
+              {Foods.map((p) => (
+                <Card
+                  style={{ width: "14rem" }}
+                  className="p-2 mb-3"
+                  key={p.id}
+                >
+                  <Card.Img variant="top" src={p.image} />
+                  <Card.Body className="py-3 px-1">
+                    <Card.Title className="fs-6">{p.name}</Card.Title>
+                    <Card.Text className="text-danger">{p.price1}</Card.Text>
+                    <Button
+                      style={{
+                        marginBottom: "-10px",
+                        width: "100%",
+                        backgroundColor: "#FFC700",
+                        border: "none",
+                      }}
+                      className="py-1 text-dark"
+                      onClick={() => {
+                        handleShow();
+                      }}
+                    >
+                      Order
+                    </Button>
+                  </Card.Body>
+                </Card>
+              ))}
+            </div>
           )}
         </div>
       </div>

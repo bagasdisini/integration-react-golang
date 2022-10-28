@@ -1,16 +1,12 @@
 import Pizza from "../assets/pizza.png";
 import Line from "../assets/garis.png";
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { API } from "../config/api";
 import { useQuery } from "react-query";
 
 function Page() {
   const navigate = useNavigate();
-
-  const navigateDetail = () => {
-    navigate("/detail-restaurant");
-  };
 
   useEffect(() => {
     document.title = "Ways Food";
@@ -58,6 +54,7 @@ function Page() {
       >
         <div className="d-flex flex-wrap" style={{ justifyContent: "center" }}>
           {admins?.map((p) => (
+            
             <div
               className="my-4 p-3 rounded mx-3"
               style={{
@@ -66,7 +63,9 @@ function Page() {
                 cursor: "pointer",
               }}
               key={p.id}
-              onClick={navigateDetail}
+              onClick={() => {
+                navigate(`/detail-restaurant/${p.id}`);
+              }}
             >
               {p.image == "https://localhost:5000/uploads/" ? (
                 <img src={p.image} alt="" />
@@ -83,6 +82,7 @@ function Page() {
                 {p.fullName}
               </span>
             </div>
+
           ))}
         </div>
       </div>

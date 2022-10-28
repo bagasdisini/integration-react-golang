@@ -79,7 +79,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Page />} />
         <Route
-          path="/detail-restaurant"
+          path="/detail-restaurant/:id"
           element={<Detail addItem={addItem} />}
         />
         <Route path="/my-profile/" element={<Profile />} />
