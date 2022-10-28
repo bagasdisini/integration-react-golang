@@ -37,14 +37,14 @@ func (r *repository) ShowAdmins() ([]models.Admin, error) {
 	return Admin, err
 }
 
-func (r *repository) GetUserByIDUser(ID int) (models.User, error) {
+func (r *repository) GetUsers(ID int) (models.User, error) {
 	var user models.User
 	err := r.db.First(&user, ID).Error
 
 	return user, err
 }
 
-func (r *repository) GetUserByIDAdmin(ID int) (models.Admin, error) {
+func (r *repository) GetAdmins(ID int) (models.Admin, error) {
 	var admin models.Admin
 	err := r.db.First(&admin, ID).Error
 

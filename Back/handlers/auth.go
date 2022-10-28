@@ -136,6 +136,7 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 			Email:    user.Email,
 			Password: user.Password,
 			Token:    token,
+			Role:     user.Role,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -181,10 +182,64 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 			Email:    admin.Email,
 			Password: admin.Password,
 			Token:    token,
+			Role:     admin.Role,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
 		response := dto.SuccessResult{Status: http.StatusOK, Data: AuthResponse}
 		json.NewEncoder(w).Encode(response)
 	}
+}
+
+func (h *handlerAuth) CheckAuth(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
+	userId := int(userInfo["id"].(float64))
+
+	userInfo2 := r.Context().Value("userInfo").(jwt.MapClaims)
+	userRole := string(userInfo2["role"].(string))
+
+	if userRole == "user" {
+		user, err := h.AuthRepository.GetUsers(userId)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		CheckAuthResponse := authdto.CheckAuthResponse{
+			Email:    user.Email,
+			Password: user.Password,
+			FullName: user.FullName,
+			Role:     user.Role,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		response := dto.SuccessResult{Status: http.StatusOK, Data: CheckAuthResponse}
+		json.NewEncoder(w).Encode(response)
+	}
+
+	if userRole == "admin" {
+		user, err := h.AuthRepository.GetAdmins(userId)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		CheckAuthResponse := authdto.CheckAuthResponse{
+			Email:    user.Email,
+			Password: user.Password,
+			FullName: user.FullName,
+			Role:     user.Role,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		response := dto.SuccessResult{Status: http.StatusOK, Data: CheckAuthResponse}
+		json.NewEncoder(w).Encode(response)
+	}
+
 }

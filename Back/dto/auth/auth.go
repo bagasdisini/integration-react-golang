@@ -11,4 +11,13 @@ type AuthResponse struct {
 	Password string `json:"password"`
 	FullName string `json:"fullName"`
 	Token    string `json:"token"`
+	Role     string `json:"role"`
+}
+
+type CheckAuthResponse struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	FullName string `json:"fullName"`
+	Token    string `json:"token"`
+	Role     string `json:"role"`
 }
