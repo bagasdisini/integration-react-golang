@@ -124,6 +124,7 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 		gnrtToken["id"] = user.ID
 		gnrtToken["exp"] = time.Now().Add(time.Hour * 3).Unix()
 		gnrtToken["role"] = user.Role
+		gnrtToken["image"] = user.Image
 
 		token, err := jwtToken.GenerateToken(&gnrtToken)
 		if err != nil {
@@ -132,11 +133,15 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 		}
 
 		AuthResponse := authdto.AuthResponse{
+			ID:       user.ID,
 			FullName: user.FullName,
 			Email:    user.Email,
 			Password: user.Password,
 			Token:    token,
 			Role:     user.Role,
+			Gender:   user.Gender,
+			Image:    "https://localhost:5000/uploads/" + user.Image,
+			Phone:    user.Phone,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -170,6 +175,7 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 		gnrtToken["id"] = admin.ID
 		gnrtToken["exp"] = time.Now().Add(time.Hour * 3).Unix()
 		gnrtToken["role"] = admin.Role
+		gnrtToken["image"] = admin.Image
 
 		token, err := jwtToken.GenerateToken(&gnrtToken)
 		if err != nil {
@@ -178,11 +184,15 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 		}
 
 		AuthResponse := authdto.AuthResponse{
+			ID:       admin.ID,
 			FullName: admin.FullName,
 			Email:    admin.Email,
 			Password: admin.Password,
 			Token:    token,
 			Role:     admin.Role,
+			Gender:   admin.Gender,
+			Image:    "https://localhost:5000/uploads/" + admin.Image,
+			Phone:    admin.Phone,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -208,10 +218,14 @@ func (h *handlerAuth) CheckAuth(w http.ResponseWriter, r *http.Request) {
 		}
 
 		CheckAuthResponse := authdto.CheckAuthResponse{
+			ID:       user.ID,
 			Email:    user.Email,
 			Password: user.Password,
 			FullName: user.FullName,
 			Role:     user.Role,
+			Gender:   user.Gender,
+			Phone:    user.Phone,
+			Image:    "https://localhost:5000/uploads/" + user.Image,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -229,10 +243,14 @@ func (h *handlerAuth) CheckAuth(w http.ResponseWriter, r *http.Request) {
 		}
 
 		CheckAuthResponse := authdto.CheckAuthResponse{
+			ID:       user.ID,
 			Email:    user.Email,
 			Password: user.Password,
 			FullName: user.FullName,
 			Role:     user.Role,
+			Gender:   user.Gender,
+			Phone:    user.Phone,
+			Image:    "https://localhost:5000/uploads/" + user.Image,
 		}
 
 		w.Header().Set("Content-Type", "application/json")

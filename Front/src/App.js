@@ -82,7 +82,7 @@ function App() {
           path="/detail-restaurant"
           element={<Detail addItem={addItem} />}
         />
-        <Route path="/my-profile" element={<Profile />} />
+        <Route path="/my-profile/" element={<Profile />} />
         <Route path="/profile-partner" element={<ProfilePartner />} />
         <Route
           path="/cart"

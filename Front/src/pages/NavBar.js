@@ -17,6 +17,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Alert } from "react-bootstrap";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { useQuery } from "react-query";
 
 function Navigation({ totalItems }) {
   const [show, setShow] = useState(false);
@@ -33,10 +34,6 @@ function Navigation({ totalItems }) {
     navigate("/");
   };
 
-  const navigateProfile = () => {
-    navigate("/my-profile");
-  };
-
   const navigateCart = () => {
     navigate("/cart");
   };
@@ -50,7 +47,11 @@ function Navigation({ totalItems }) {
   };
 
   const [state, dispatch] = useContext(UserContext);
-
+  
+  const navigateProfile = () => {
+    navigate(`/my-profile`);
+  };
+  
   const [message, setMessage] = useState(null);
 
   const [form, setForm] = useState({
@@ -61,8 +62,6 @@ function Navigation({ totalItems }) {
     phone: "",
     role: "",
   });
-
-  console.log(form);
 
   const { fullName, email, password, gender, phone, role } = form;
 
@@ -117,7 +116,6 @@ function Navigation({ totalItems }) {
   });
 
   const LogoutHandle = () => {
-    console.log(state)
     dispatch({
         type: "LOGOUT"
     })
@@ -127,8 +125,6 @@ function Navigation({ totalItems }) {
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
-
-  console.log(state);
 
   return (
     <Navbar style={{ backgroundColor: "#FFC700" }} className="sticky-top">

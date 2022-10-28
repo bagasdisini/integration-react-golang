@@ -4,6 +4,10 @@ import Container from "react-bootstrap/Container";
 import React, { useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
+import { useQuery } from "react-query";
+import { API } from "../config/api";
 
 function Profile() {
   const navigate = useNavigate();
@@ -16,6 +20,10 @@ function Profile() {
     document.title = "My Profile";
   }, []);
 
+  const [state, dispatch] = useContext(UserContext);
+
+  console.log(`ini state woy`,state);
+
   return (
     <div>
       <Container
@@ -27,7 +35,13 @@ function Profile() {
             <div className="d-flex">
               <div className="d-flex flex-column">
                 <h3 className="fw-bold mb-4">My Profile</h3>
-                <img src={PP1} width="150" alt="logo" className="mb-4" />
+
+                {state.user.image === "https://localhost:5000/uploads/" ? (
+                  <img src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg" width="150" alt="logo" className="mb-4" style={{objectFit: "cover"}}/>
+                  ):(
+                  <img src="" width="150" alt="logo" className="mb-4" />
+              )}
+                
                 <Button
                   style={{ backgroundColor: "#433434", border: "none" }}
                   onClick={navigateEditProfile}
@@ -37,11 +51,11 @@ function Profile() {
               </div>
               <div className="ms-4" style={{ marginTop: "55px" }}>
                 <p style={{ color: "#613D2B" }}>Full Name</p>
-                <p style={{ marginTop: "-12px" }}>Andi</p>
+                <p style={{ marginTop: "-12px" }}>{state.user.fullName}</p>
                 <p style={{ color: "#613D2B" }}>Email</p>
-                <p style={{ marginTop: "-12px" }}>andigans@gmail.com</p>
+                <p style={{ marginTop: "-12px" }}>{state.user.email}</p>
                 <p style={{ color: "#613D2B" }}>Phone</p>
-                <p style={{ marginTop: "-12px" }}>083896833122</p>
+                <p style={{ marginTop: "-12px" }}>{state.user.phone}</p>
               </div>
             </div>
             <div style={{ width: "45%" }}>
