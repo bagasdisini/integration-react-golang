@@ -194,11 +194,9 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 func (h *handlerAuth) CheckAuth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
+	userInfo := r.Context().Value("authInfo").(jwt.MapClaims)
 	userId := int(userInfo["id"].(float64))
-
-	userInfo2 := r.Context().Value("userInfo").(jwt.MapClaims)
-	userRole := string(userInfo2["role"].(string))
+	userRole := userInfo["role"].(string)
 
 	if userRole == "user" {
 		user, err := h.AuthRepository.GetUsers(userId)
@@ -241,5 +239,4 @@ func (h *handlerAuth) CheckAuth(w http.ResponseWriter, r *http.Request) {
 		response := dto.SuccessResult{Status: http.StatusOK, Data: CheckAuthResponse}
 		json.NewEncoder(w).Encode(response)
 	}
-
 }

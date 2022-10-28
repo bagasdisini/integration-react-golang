@@ -12,7 +12,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Product from "../assets/product.png";
 import { useMutation } from "react-query";
-import { API } from "../config/api";
+import { API, setAuthToken } from "../config/api";
 import { Link, useNavigate } from "react-router-dom";
 import { Alert } from "react-bootstrap";
 import { useContext } from "react";
@@ -100,10 +100,6 @@ function Navigation({ totalItems }) {
 
       const data = await API.post("/login", form);
 
-      const alert = <Alert variant="success">Login berhasil!</Alert>;
-
-      setMessage(alert);
-
       let payload = data.data.data;
 
       dispatch({
@@ -117,9 +113,6 @@ function Navigation({ totalItems }) {
       console.log("ini data login", data);
     } catch (error) {
       console.log(error);
-      const alert = <Alert variant="danger">Email / password salah!</Alert>;
-
-      setMessage(alert);
     }
   });
 
@@ -129,6 +122,10 @@ function Navigation({ totalItems }) {
         type: "LOGOUT"
     })
     navigate("/")
+}
+
+if (localStorage.token) {
+  setAuthToken(localStorage.token);
 }
 
   console.log(state);

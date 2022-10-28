@@ -13,6 +13,7 @@ import { API } from "../config/api";
 import { Alert } from "react-bootstrap";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { useQuery } from "react-query";
 
 function Page({ setState }) {
   const [show, setShow] = useState(false);
@@ -105,7 +106,11 @@ function Page({ setState }) {
     }
   });
 
-  console.log(state);
+  let { data: admins } = useQuery("adminCache", async () => {
+    const response = await API.get("/admins");
+    return response.data.data;
+  });
+  console.log(admins);
 
   return (
     <div>
@@ -146,10 +151,7 @@ function Page({ setState }) {
                 name="fullName"
               />
             </Form.Group>
-            <Form.Group
-              className="mb-3"
-              style={{ backgroundColor: "#F4F4F4" }}
-            >
+            <Form.Group className="mb-3" style={{ backgroundColor: "#F4F4F4" }}>
               <Form.Select
                 style={{ backgroundColor: "#F4F4F4" }}
                 value={gender}
@@ -297,20 +299,24 @@ function Page({ setState }) {
         <img src={Pizza} width="400px" alt="pizza" className="m-5" />
       </div>
 
-      <div className="my-4 mx-auto" style={{ width: "75%" }}>
+      <div className="my-4 mx-auto" style={{ width: "75%", overflow: "auto"}}>
         <div>
           <h3 className="fw-bold">Popular Restaurant</h3>
         </div>
         <div className="d-flex justify-content-evenly">
-          {Restaurant.map((item, index) => (
+          {admins?.map((p) => (
             <div
               className="mb-5 mt-4 p-3 rounded"
               style={{ backgroundColor: "white", width: "23%" }}
-              key={index}
+              key={p.id}
             >
-              <img src={item.image} alt="bk" />
+              {p.image == "https://localhost:5000/uploads/" ? (
+                <img src={p.image} alt="" /> 
+                ):(
+                  <img src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg" alt="" width="60px" height="60px" style={{borderRadius: "50%"}}/>
+              )}
               <span className="fw-bold ms-3" style={{ fontSize: "18px" }}>
-                {item.name}
+                {p.fullName}
               </span>
             </div>
           ))}

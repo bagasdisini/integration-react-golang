@@ -10,12 +10,17 @@ import EditProfile from "./pages/EditProfile";
 import EditProfilePartner from "./pages/EditProfilePartner";
 import AddProduct from "./pages/AddProduct";
 import Transaction from "./pages/IncomeTransaction";
-import { BrowserRouter as Router, Route, Routes, useNavigate  } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 import React from "react";
 import { CartProvider, useCart } from "react-use-cart";
 import { API, setAuthToken } from "./config/api";
-import { useContext, useEffect } from 'react';
-import { UserContext } from './context/UserContext';
+import { useContext, useEffect } from "react";
+import { UserContext } from "./context/UserContext";
 
 function App() {
   const {
@@ -27,28 +32,25 @@ function App() {
     cartTotal,
   } = useCart();
 
-  if (localStorage.token) {
-    setAuthToken(localStorage.token);
-  }
-
   const navigate = useNavigate();
 
   const [state, dispatch] = useContext(UserContext);
 
-  console.log(localStorage);
-
   useEffect(() => {
-    if (state.isLogin === true && state.user.role === "user") {
-      navigate("/");
-    } else if (state.isLogin == true && state.user.role === "admin") {
-      navigate("/");
+    if (localStorage.token) {
+      setAuthToken(localStorage.token);
     }
+
+    // if (state.isLogin === true && state.user.role === "user") {
+    //   navigate("/");
+    // } else if (state.isLogin == true && state.user.role === "admin") {
+    //   navigate("/");
+    // }
   }, [state]);
 
   const checkUser = async () => {
     try {
       const response = await API.get("/check-auth");
-      console.log(response);
 
       // Get user data
       let payload = response.data.data;
@@ -60,6 +62,8 @@ function App() {
         type: "USER_SUCCESS",
         payload,
       });
+      console.log(state);
+      console.log("response", response);
     } catch (error) {
       console.log(error);
     }
@@ -71,35 +75,32 @@ function App() {
 
   return (
     <CartProvider>
-        <Navigation totalItems={totalItems} />
-        <Routes>
-          <Route path="/" element={<Page />} />
-          <Route
-            path="/detail-restaurant"
-            element={<Detail addItem={addItem} />}
-          />
-          <Route path="/my-profile" element={<Profile />} />
-          <Route path="/profile-partner" element={<ProfilePartner />} />
-          <Route
-            path="/cart"
-            element={
-              <Cart
-                items={items}
-                updateItemQuantity={updateItemQuantity}
-                removeItem={removeItem}
-                cartTotal={cartTotal}
-                totalItems={totalItems}
-              />
-            }
-          />
-          <Route path="/edit-my-profile" element={<EditProfile />} />
-          <Route
-            path="/edit-profile-partner"
-            element={<EditProfilePartner />}
-          />
-          <Route path="/add-product" element={<AddProduct />} />
-          <Route path="/transaction" element={<Transaction />} />
-        </Routes>
+      <Navigation totalItems={totalItems} />
+      <Routes>
+        <Route path="/" element={<Page />} />
+        <Route
+          path="/detail-restaurant"
+          element={<Detail addItem={addItem} />}
+        />
+        <Route path="/my-profile" element={<Profile />} />
+        <Route path="/profile-partner" element={<ProfilePartner />} />
+        <Route
+          path="/cart"
+          element={
+            <Cart
+              items={items}
+              updateItemQuantity={updateItemQuantity}
+              removeItem={removeItem}
+              cartTotal={cartTotal}
+              totalItems={totalItems}
+            />
+          }
+        />
+        <Route path="/edit-my-profile" element={<EditProfile />} />
+        <Route path="/edit-profile-partner" element={<EditProfilePartner />} />
+        <Route path="/add-product" element={<AddProduct />} />
+        <Route path="/transaction" element={<Transaction />} />
+      </Routes>
     </CartProvider>
   );
 }

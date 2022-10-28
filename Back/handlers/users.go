@@ -24,41 +24,36 @@ func HandlerUser(UserRepository repositories.UserRepository) *handler {
 
 func (h *handler) ShowUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
-	roleInfo := r.Context().Value("authInfo").(jwt.MapClaims)
-	roleStr := string(roleInfo["role"].(string))
-
-	if roleStr == "user" {
-		users, err := h.UserRepository.ShowUsers()
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(err.Error())
-		}
-
-		for i, p := range users {
-			users[i].Image = "http://localhost:5000/uploads/" + p.Image
-		}
-
-		w.WriteHeader(http.StatusOK)
-		response := dto.SuccessResult{Status: http.StatusOK, Data: users}
-		json.NewEncoder(w).Encode(response)
+	users, err := h.UserRepository.ShowUsers()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(err.Error())
 	}
 
-	if roleStr == "admin" {
-		users, err := h.UserRepository.ShowAdmins()
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(err.Error())
-		}
-
-		for i, p := range users {
-			users[i].Image = "http://localhost:5000/uploads/" + p.Image
-		}
-
-		w.WriteHeader(http.StatusOK)
-		response := dto.SuccessResult{Status: http.StatusOK, Data: users}
-		json.NewEncoder(w).Encode(response)
+	for i, p := range users {
+		users[i].Image = "http://localhost:5000/uploads/" + p.Image
 	}
+
+	w.WriteHeader(http.StatusOK)
+	response := dto.SuccessResult{Status: http.StatusOK, Data: users}
+	json.NewEncoder(w).Encode(response)
+}
+
+func (h *handler) ShowAdmins(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	users, err := h.UserRepository.ShowAdmins()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(err.Error())
+	}
+
+	for i, p := range users {
+		users[i].Image = "http://localhost:5000/uploads/" + p.Image
+	}
+
+	w.WriteHeader(http.StatusOK)
+	response := dto.SuccessResult{Status: http.StatusOK, Data: users}
+	json.NewEncoder(w).Encode(response)
 }
 
 func (h *handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
