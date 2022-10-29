@@ -7,7 +7,6 @@ import { API } from "../config/api";
 import { useQuery } from "react-query";
 import { useParams } from 'react-router-dom';
 
-
 function Detail({ addItem }) {
   const showToastMessage = () => {
     toast.success("Sukses menambahkan ke keranjang!", {

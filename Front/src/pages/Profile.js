@@ -5,6 +5,8 @@ import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { API } from "../config/api";
+import { useQuery } from "react-query";
 
 function Profile() {
   const navigate = useNavigate();
@@ -18,6 +20,14 @@ function Profile() {
   }, []);
 
   const [state] = useContext(UserContext);
+
+  let { data: transactions } = useQuery("mytransactions1Cache", async () => {
+    const response = await API.get("/my-transactions");
+    const response2 = response.data.data.filter(
+      (p) => p.buyer_id == state.user.id
+    );
+    return response2;
+  });
 
   return (
     <div>
@@ -67,38 +77,62 @@ function Profile() {
             </div>
             <div style={{ width: "45%" }}>
               <h3 className="fw-bold mb-4">History Transaction</h3>
-              <div
-                style={{ backgroundColor: "white" }}
-                className="p-3 d-flex justify-content-between"
-              >
-                <div>
-                  <p className="fw-bold">Geprek Bensu</p>
-                  <p style={{ marginTop: "-12px", fontSize: "13px" }}>
-                    <strong>Saturday</strong>, 12 March 2021
-                  </p>
-                  <p
-                    style={{ fontSize: "13px", marginBottom: "0px" }}
-                    className="fw-bold"
+              <div style={{
+                overflowY: "scroll",
+                height: "400px"
+              }}>
+              {transactions?.map((p) => (
+                  <div
+                    style={{ backgroundColor: "white" }}
+                    className="p-3 d-flex justify-content-between my-3"
                   >
-                    Total : Rp 45.000
-                  </p>
-                </div>
-                <div>
-                  <img src={Icon} width="130" alt="logo" />
-                  <br></br>
-                  <Button
-                    className="py-0 px-5"
-                    style={{
-                      fontSize: "12px",
-                      marginBottom: "-35px",
-                      backgroundColor: "#E5FFF2",
-                      color: "#00FF47",
-                      border: "none",
-                    }}
-                  >
-                    Finished
-                  </Button>
-                </div>
+                    <div>
+                      <p className="fw-bold">{p.product}</p>
+                      <p style={{ marginTop: "-12px", fontSize: "13px" }}>
+                        <span>{p.date}</span>
+                      </p>
+                      <p
+                        style={{ fontSize: "13px", marginBottom: "0px" }}
+                        className="fw-bold"
+                      >
+                        Total : {p.value}
+                      </p>
+                    </div>
+                    <div>
+                      <img src={Icon} width="130" alt="logo" />
+                      <br></br>
+
+                      {p.status === "Pending" ? (
+                        <Button
+                          className="py-0 px-5"
+                          style={{
+                            fontSize: "12px",
+                            marginBottom: "-35px",
+                            backgroundColor: "#E74C3C",
+                            color: "white",
+                            border: "none",
+                          }}
+                        >
+                          {p.status}
+                        </Button>
+                      ) : (
+                        <Button
+                          className="py-0 px-5"
+                          style={{
+                            fontSize: "12px",
+                            marginBottom: "-35px",
+                            backgroundColor: "#2ECC71",
+                            color: "white",
+                            border: "none",
+                            width: "145px",
+                          }}
+                        >
+                          {p.status}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+              ))}
               </div>
             </div>
           </div>

@@ -21,4 +21,5 @@ type TransactionResponse struct {
 	BuyerID int    `json:"user_id"`
 	AdminID int    `json:"admin_id"`
 	Product string `json:"product"`
+	Date    string `json:"date"`
 }

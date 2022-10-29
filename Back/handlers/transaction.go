@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
 )
 
@@ -36,7 +37,6 @@ func (h *handlerTransaction) ShowTransaction(w http.ResponseWriter, r *http.Requ
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Status: http.StatusOK, Data: transaction}
 	json.NewEncoder(w).Encode(response)
-
 }
 
 func (h *handlerTransaction) GetTransactionByID(w http.ResponseWriter, r *http.Request) {
@@ -56,11 +56,13 @@ func (h *handlerTransaction) GetTransactionByID(w http.ResponseWriter, r *http.R
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Status: http.StatusOK, Data: transaction}
 	json.NewEncoder(w).Encode(response)
-
 }
 
 func (h *handlerTransaction) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	adminInfo := r.Context().Value("authInfo").(jwt.MapClaims)
+	adminId := int(adminInfo["id"].(float64))
 
 	request := new(transactiondto.CreateTransactionRequest)
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -70,12 +72,17 @@ func (h *handlerTransaction) CreateTransaction(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	input := time.Now()
+
+	dateParse := input.Format("2 Jan 2006 15:04")
+
 	transaction := models.TransactionUser{
 		Value:   request.Value,
 		Product: request.Product,
 		Status:  "Pending",
 		AdminID: request.AdminID,
-		Date:    time.Now(),
+		Date:    dateParse,
+		BuyerID: adminId,
 	}
 
 	validation := validator.New()
