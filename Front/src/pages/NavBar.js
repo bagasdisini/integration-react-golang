@@ -17,7 +17,7 @@ import { Alert } from "react-bootstrap";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 
-function Navigation({ totalItems }) {
+function Navigation({ totalItems, emptyCart }) {
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
 
@@ -115,6 +115,7 @@ function Navigation({ totalItems }) {
     dispatch({
       type: "LOGOUT",
     });
+    emptyCart();
     navigate("/");
   };
 

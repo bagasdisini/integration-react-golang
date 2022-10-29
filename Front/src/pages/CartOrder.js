@@ -7,6 +7,7 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
+import { API } from "../config/api";
 
 function Cart({
   items,
@@ -29,6 +30,40 @@ function Cart({
   useEffect(() => {
     document.title = "Cart";
   }, []);
+
+  let titleString = "";
+
+  for (let x = 0; x < items.length; x++) {
+    if (x == 0) {
+      titleString = items[x].title;
+    } else {
+      titleString = titleString + ", " + items[x].title;
+    }
+  }
+
+  let adminID = items[0].admin_id;
+
+  console.log(adminID);
+
+  const [form, setForm] = useState({
+    value: cartTotal,
+    product: titleString,
+    admin_id: adminID
+  });
+
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+
+      const data = await API.post("/transaction", form, {
+        headers: {
+          Authorization: `Bearer ${localStorage.token}`,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -116,7 +151,7 @@ function Cart({
                           alt="geprek"
                         ></img>
                         <div className="align-self-center">
-                          <p className="ms-3">{item.name}</p>
+                          <p className="ms-3">{item.title}</p>
                           <Button
                             style={{
                               backgroundColor: "#433434",
@@ -153,7 +188,7 @@ function Cart({
                       <div className="d-flex align-items-center justify-content-end">
                         <div>
                           <p className="text-danger">
-                            Rp{item.quantity * item.price}.000
+                            {item.quantity * item.price}
                           </p>
                           <img
                             src={Bin}
@@ -191,7 +226,7 @@ function Cart({
                     <p>Ongkir</p>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <p className="text-danger">Rp{cartTotal}.000</p>
+                    <p className="text-danger">{cartTotal}</p>
                     <p>{totalItems}</p>
                     <p className="text-danger">Rp10.000</p>
                   </div>
@@ -199,7 +234,7 @@ function Cart({
                 <hr style={{ marginTop: "-3px", opacity: "100%" }}></hr>
                 <div className="d-flex justify-content-between">
                   <p className="text-danger">Total</p>
-                  <p className="text-danger">Rp{cartTotal + 10}.000</p>
+                  <p className="text-danger">{cartTotal + 10000}</p>
                 </div>
               </div>
             </div>
@@ -210,6 +245,7 @@ function Cart({
                 border: "none",
               }}
               className="px-5"
+              onClick={(e) => handleSubmit(e)}
             >
               Order!
             </Button>

@@ -30,9 +30,8 @@ function App() {
     updateItemQuantity,
     removeItem,
     cartTotal,
+    emptyCart,
   } = useCart();
-
-  const navigate = useNavigate();
 
   const [state, dispatch] = useContext(UserContext);
 
@@ -40,7 +39,6 @@ function App() {
     if (localStorage.token) {
       setAuthToken(localStorage.token);
     }
-
   }, [state]);
 
   const checkUser = async () => {
@@ -70,7 +68,7 @@ function App() {
 
   return (
     <CartProvider>
-      <Navigation totalItems={totalItems} />
+      <Navigation totalItems={totalItems} emptyCart={emptyCart} />
       <Routes>
         <Route path="/" element={<Page />} />
         <Route

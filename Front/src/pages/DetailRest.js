@@ -7,7 +7,8 @@ import { API } from "../config/api";
 import { useQuery } from "react-query";
 import { useParams } from 'react-router-dom';
 
-function Detail() {
+
+function Detail({ addItem }) {
   const showToastMessage = () => {
     toast.success("Sukses menambahkan ke keranjang!", {
       position: "bottom-right",
@@ -30,6 +31,8 @@ function Detail() {
     const response2 = response.data.data.filter((p) => p.admin_id == id);
     return response2;
   });
+
+  console.log(products);
 
   return (
     <div>
@@ -71,8 +74,9 @@ function Detail() {
                       }}
                       className="py-1 text-dark"
                       onClick={() => {
-                        showToastMessage();
-                      }}
+                      showToastMessage();
+                      addItem(p);
+                    }}
                     >
                       Order
                     </Button>
