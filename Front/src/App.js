@@ -14,7 +14,6 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  useNavigate,
 } from "react-router-dom";
 import React from "react";
 import { CartProvider, useCart } from "react-use-cart";
@@ -86,6 +85,7 @@ function App() {
               removeItem={removeItem}
               cartTotal={cartTotal}
               totalItems={totalItems}
+              emptyCart={emptyCart}
             />
           }
         />

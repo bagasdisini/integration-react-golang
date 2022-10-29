@@ -5,6 +5,9 @@ import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { API } from "../config/api";
+import { useQuery } from "react-query";
+import Card from "react-bootstrap/Card";
 
 function ProfilePartner() {
   const navigate = useNavigate();
@@ -22,6 +25,22 @@ function ProfilePartner() {
   }, []);
 
   const [state] = useContext(UserContext);
+
+  let { data: transactions } = useQuery("mytransactions12Cache", async () => {
+    const response = await API.get("/my-transactions");
+    const response2 = response.data.data.filter(
+      (p) => p.admin_id == state.user.id
+    );
+    return response2;
+  });
+
+  let { data: products } = useQuery("productsCache", async () => {
+    const response = await API.get("/products");
+    const response2 = response.data.data.filter(
+      (p) => p.admin_id == state.user.id
+    );
+    return response2;
+  });
 
   return (
     <div>
@@ -70,49 +89,108 @@ function ProfilePartner() {
               </div>
             </div>
             <div style={{ width: "45%" }}>
-              <h3 className="fw-bold mb-4">History Order</h3>
+              <h3 className="fw-bold mb-4">History Transaction</h3>
               <div
-                style={{ backgroundColor: "white" }}
-                className="p-3 d-flex justify-content-between"
+                style={{
+                  overflowY: "scroll",
+                  height: "400px",
+                }}
               >
-                <div>
-                  <p className="fw-bold">Andi</p>
-                  <p style={{ marginTop: "-12px", fontSize: "13px" }}>
-                    <strong>Saturday</strong>, 12 March 2021
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "13px",
-                      marginBottom: "0px",
-                      color: "#974A4A",
-                    }}
-                    className="fw-bold"
+                {transactions?.map((p) => (
+                  <div
+                    style={{ backgroundColor: "white", height: "120px" }}
+                    className="p-3 d-flex justify-content-between my-3"
                   >
-                    Total : Rp 45.000
-                  </p>
-                </div>
-                <div>
-                  <img src={Icon} width="130" alt="logo" />
-                  <br></br>
-                  <Button
-                    className="py-0 px-5"
-                    style={{
-                      fontSize: "12px",
-                      marginBottom: "-35px",
-                      backgroundColor: "#E5FFF2",
-                      color: "#00FF47",
-                      border: "none",
-                    }}
-                    onClick={navigateTransaction}
-                  >
-                    Finished
-                  </Button>
-                </div>
+                    <div>
+                      <p className="fw-bold">{p.product}</p>
+                      <p style={{ marginTop: "-12px", fontSize: "13px" }}>
+                        <span>{p.date}</span>
+                      </p>
+                      <p
+                        style={{ fontSize: "13px", marginBottom: "0px" }}
+                        className="fw-bold"
+                      >
+                        Total : {p.value}
+                      </p>
+                    </div>
+                    <div>
+                      <img src={Icon} width="130" alt="logo" />
+                      <br></br>
+
+                      {p.status === "Pending" ? (
+                        <Button
+                          className="py-0 px-5"
+                          style={{
+                            fontSize: "12px",
+                            marginBottom: "-35px",
+                            backgroundColor: "#E74C3C",
+                            color: "white",
+                            border: "none",
+                          }}
+                        >
+                          {p.status}
+                        </Button>
+                      ) : (
+                        <Button
+                          className="py-0 px-5"
+                          style={{
+                            fontSize: "12px",
+                            marginBottom: "-35px",
+                            backgroundColor: "#2ECC71",
+                            color: "white",
+                            border: "none",
+                            width: "145px",
+                          }}
+                        >
+                          {p.status}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </Container>
+      <div className="mx-auto my-4" style={{ width: "75%" }}>
+        <h2 className="fw-bold mb-4"> My Products</h2>
+        <div
+          className="d-flex justify-content-evenly flex-wrap"
+          style={{ overflowY: "scroll", overflowX: "hidden", height: "400px" }}
+        >
+          {products?.map((p) => (
+            <Card
+              style={{
+                width: "14rem",
+                height: "65%",
+              }}
+              className="p-2 mb-3"
+              key={p.id}
+            >
+              <Card.Img variant="top" src={p.image} />
+              <Card.Body className="py-3 px-1">
+                <Card.Title className="fs-6">{p.title}</Card.Title>
+                <Card.Text className="text-danger">{p.price}</Card.Text>
+                <Button
+                  style={{
+                    marginBottom: "-10px",
+                    width: "100%",
+                    backgroundColor: "#FFC700",
+                    border: "none",
+                  }}
+                  className="py-1 text-dark"
+                  //   onClick={() => {
+                  //   (p);
+                  // }}
+                >
+                  Edit
+                </Button>
+              </Card.Body>
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

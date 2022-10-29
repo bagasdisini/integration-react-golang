@@ -152,6 +152,7 @@ function EditProfilePartner() {
                     aria-label="Partner"
                     aria-describedby="basic-addon1"
                     name="fullName"
+                    value={form.fullName}
                     onChange={handleChange}
                   />
                 </InputGroup>
@@ -170,6 +171,7 @@ function EditProfilePartner() {
                 <Form.Control
                   placeholder="Email"
                   aria-label="Email"
+                  value={form.email}
                   aria-describedby="basic-addon1"
                   name="email"
                   onChange={handleChange}
@@ -179,6 +181,7 @@ function EditProfilePartner() {
                 <Form.Control
                   placeholder="Phone"
                   aria-label="Phone"
+                  value={form.phone}
                   aria-describedby="basic-addon1"
                   name="phone"
                   onChange={handleChange}
@@ -189,6 +192,7 @@ function EditProfilePartner() {
                   <Form.Control
                     placeholder="Location"
                     aria-label="Location"
+                    value={form.location}
                     aria-describedby="basic-addon1"
                     name="location"
                     onChange={handleChange}

@@ -15,6 +15,7 @@ function Cart({
   removeItem,
   cartTotal,
   totalItems,
+  emptyCart
 }) {
   const navigate = useNavigate();
 
@@ -68,6 +69,8 @@ function Cart({
           Authorization: `Bearer ${localStorage.token}`,
         },
       });
+
+      emptyCart();
     } catch (error) {
       console.log(error);
     }

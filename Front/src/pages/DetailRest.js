@@ -5,9 +5,14 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { API } from "../config/api";
 import { useQuery } from "react-query";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 function Detail({ addItem }) {
+
+  const [state] = useContext(UserContext);
+
   const showToastMessage = () => {
     toast.success("Sukses menambahkan ke keranjang!", {
       position: "bottom-right",
@@ -31,8 +36,6 @@ function Detail({ addItem }) {
     return response2;
   });
 
-  console.log(products);
-
   return (
     <div>
       <ToastContainer
@@ -53,17 +56,15 @@ function Detail({ addItem }) {
       >
         <div className="m-5" style={{ width: "70%" }}>
           <h2 className="fw-bold mb-4">Menu</h2>
-            <div className="d-flex justify-content-evenly flex-wrap">
-              {products?.map((p) => (
-                <Card
-                  style={{ width: "14rem" }}
-                  className="p-2 mb-3"
-                  key={p.id}
-                >
-                  <Card.Img variant="top" src={p.image} />
-                  <Card.Body className="py-3 px-1">
-                    <Card.Title className="fs-6">{p.title}</Card.Title>
-                    <Card.Text className="text-danger">{p.price}</Card.Text>
+          <div className="d-flex justify-content-evenly flex-wrap">
+            {products?.map((p) => (
+              <Card style={{ width: "14rem" }} className="p-2 mb-3" key={p.id}>
+                <Card.Img variant="top" src={p.image} />
+                <Card.Body className="py-3 px-1">
+                  <Card.Title className="fs-6">{p.title}</Card.Title>
+                  <Card.Text className="text-danger">{p.price}</Card.Text>
+
+                  {state.user.role == "user" ? (
                     <Button
                       style={{
                         marginBottom: "-10px",
@@ -73,16 +74,29 @@ function Detail({ addItem }) {
                       }}
                       className="py-1 text-dark"
                       onClick={() => {
-                      showToastMessage();
-                      addItem(p);
-                    }}
+                        showToastMessage();
+                        addItem(p);
+                      }}
                     >
                       Order
                     </Button>
-                  </Card.Body>
-                </Card>
-              ))}
-            </div>
+                  ) : (
+                    <Button
+                      style={{
+                        marginBottom: "-10px",
+                        width: "100%",
+                        backgroundColor: "#FFC700",
+                        border: "none",
+                      }}
+                      className="py-1 text-dark"
+                    >
+                      Order
+                    </Button>
+                  )}
+                </Card.Body>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </div>

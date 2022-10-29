@@ -24,7 +24,7 @@ function Page() {
   const handleShow1 = () => setShow1(true);
 
   const [state, dispatch] = useContext(UserContext);
-  
+
   if (localStorage.token) {
     setAuthToken(localStorage.token);
   }
@@ -88,7 +88,6 @@ function Page() {
 
       navigate("/");
       setShow1(false);
-
     } catch (error) {
       const alert11 = <Alert variant="danger">Email/Password Salah!</Alert>;
       setMessage(alert11);
@@ -194,7 +193,7 @@ function Page() {
 
       <Modal show={show1} onHide={handleClose1}>
         <Modal.Body>
-        {message && message}
+          {message && message}
           <Form className="p-3" onSubmit={(e) => handleSubmitLogin.mutate(e)}>
             <h3 className="mb-4 fw-bold" style={{ color: "#FFC700" }}>
               Login
@@ -361,7 +360,7 @@ function Page() {
                   handleShow1();
                 }}
               >
-               {p.image === "http://localhost:5000/uploads/" ? (
+                {p.image === "http://localhost:5000/uploads/" ? (
                   <img
                     src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"
                     alt=""
