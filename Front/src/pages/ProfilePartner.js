@@ -1,9 +1,10 @@
-import Geprek from "../assets/geprek.png";
 import Container from "react-bootstrap/Container";
 import Icon from "../assets/Icon.png";
 import React, { useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 function ProfilePartner() {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ function ProfilePartner() {
     document.title = "My Profile Partner";
   }, []);
 
+  const [state] = useContext(UserContext);
+
   return (
     <div>
       <Container
@@ -31,14 +34,25 @@ function ProfilePartner() {
             <div className="d-flex">
               <div className="d-flex flex-column">
                 <h3 className="fw-bold mb-4">Profile Partner</h3>
-                <img
-                  src={Geprek}
-                  width="150"
-                  height="190"
-                  alt="logo"
-                  className="mb-4"
-                  style={{ objectFit: "cover" }}
-                />
+                {state.user.image === "http://localhost:5000/uploads/" ? (
+                  <img
+                    src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"
+                    width="200"
+                    height="200"
+                    alt="logo"
+                    className="mb-4"
+                    style={{ objectFit: "cover" }}
+                  />
+                ) : (
+                  <img
+                    src={state.user.image}
+                    width="200"
+                    height="200"
+                    alt="logo"
+                    className="mb-4"
+                    style={{ objectFit: "cover" }}
+                  />
+                )}
                 <Button
                   style={{ backgroundColor: "#433434", border: "none" }}
                   onClick={navigateEditProfilePartner}
@@ -48,11 +62,11 @@ function ProfilePartner() {
               </div>
               <div className="ms-4" style={{ marginTop: "55px" }}>
                 <p style={{ color: "#613D2B" }}>Name Partner</p>
-                <p style={{ marginTop: "-12px" }}>Geprek bensi</p>
+                <p style={{ marginTop: "-12px" }}>{state.user.fullName}</p>
                 <p style={{ color: "#613D2B" }}>Email</p>
-                <p style={{ marginTop: "-12px" }}>bensu@gmail.com</p>
+                <p style={{ marginTop: "-12px" }}>{state.user.email}</p>
                 <p style={{ color: "#613D2B" }}>Phone</p>
-                <p style={{ marginTop: "-12px" }}>083896833122</p>
+                <p style={{ marginTop: "-12px" }}>{state.user.phone}</p>
               </div>
             </div>
             <div style={{ width: "45%" }}>

@@ -68,9 +68,12 @@ func (h *handlerProduct) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 	adminInfo := r.Context().Value("authInfo").(jwt.MapClaims)
 	adminId := int(adminInfo["id"].(float64))
-
 	dataUpload := r.Context().Value("dataFile")
-	filename := dataUpload.(string)
+	filename := ""
+
+	if dataUpload != nil {
+		filename = dataUpload.(string)
+	}
 
 	price, _ := strconv.Atoi(r.FormValue("price"))
 	category_id, _ := strconv.Atoi(r.FormValue("category_id"))
@@ -123,7 +126,11 @@ func (h *handlerProduct) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	dataUpload := r.Context().Value("dataFile")
-	filename := dataUpload.(string)
+	filename := ""
+
+	if dataUpload != nil {
+		filename = dataUpload.(string)
+	}
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
 	price, _ := strconv.Atoi(r.FormValue("price"))

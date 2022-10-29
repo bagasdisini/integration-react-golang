@@ -41,11 +41,6 @@ function App() {
       setAuthToken(localStorage.token);
     }
 
-    // if (state.isLogin === true && state.user.role === "user") {
-    //   navigate("/");
-    // } else if (state.isLogin == true && state.user.role === "admin") {
-    //   navigate("/");
-    // }
   }, [state]);
 
   const checkUser = async () => {

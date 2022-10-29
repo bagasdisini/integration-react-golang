@@ -6,15 +6,17 @@ import Button from "react-bootstrap/Button";
 import Map from "../assets/map.png";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
+import { useQuery } from "react-query";
+import { API } from "../config/api";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 function EditProfilePartner() {
+  const [state, dispatch] = useContext(UserContext);
   const navigate = useNavigate();
 
-  const navigatePartner = () => {
-    navigate("/profile-partner");
-  };
-
   const [show, setShow] = useState(false);
+  const [preview, setPreview] = useState(null);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -22,6 +24,78 @@ function EditProfilePartner() {
   useEffect(() => {
     document.title = "Edit Profile Partner";
   }, []);
+
+
+  const [form, setForm] = useState({
+    fullName: "",
+    image: "",
+    email: "",
+    phone: "",
+    location: "",
+  });
+
+  const idid = state?.user.id;
+
+  let { data: user } = useQuery("admin1Cache", async () => {
+    const response = await API.get("/admin/" + idid);
+    return response.data.data;
+  });
+
+  useEffect(() => {
+    if (user) {
+      setForm({
+        ...form,
+        fullName: user.fullName,
+        email: user.email,
+        image: user.image,
+        phone: user.phone,
+        location: user.location,
+      });
+    }
+  }, [user]);
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]:
+        e.target.type === "file" ? e.target.files[0] : e.target.value,
+    });
+
+    if (e.target.type == "file") {
+      const url = URL.createObjectURL(e.target.files[0]);
+      setPreview(url);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+
+      const formData = new FormData();
+      if (preview) {
+        formData.set("image", form?.image, form?.image.name);
+      }
+      formData.set("fullName", form.fullName);
+      formData.set("email", form.email);
+      formData.set("phone", form.phone);
+      formData.set("location", form.location);
+
+      const response = await API.patch(`/admin/${idid}`, formData);
+      
+      const auth = await API.get("/check-auth");
+
+      let payload = auth.data.data;
+
+      dispatch({
+        type: "USER_SUCCESS",
+        payload,
+      });
+
+      navigate("/profile-partner");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -68,7 +142,7 @@ function EditProfilePartner() {
         style={{ marginTop: "10px" }}
       >
         <div className="m-5" style={{ width: "90%" }}>
-          <div>
+          <Form>
             <h3 className="fw-bold mb-4">Edit Profile Partner</h3>
             <div>
               <div className="d-flex justify-content-between">
@@ -77,6 +151,8 @@ function EditProfilePartner() {
                     placeholder="Name Partner"
                     aria-label="Partner"
                     aria-describedby="basic-addon1"
+                    name="fullName"
+                    onChange={handleChange}
                   />
                 </InputGroup>
                 <InputGroup className="mb-3" style={{ width: "30%" }}>
@@ -84,6 +160,9 @@ function EditProfilePartner() {
                     placeholder="Attach Image"
                     aria-label="Image"
                     aria-describedby="basic-addon1"
+                    type="file"
+                    name="image"
+                    onChange={handleChange}
                   />
                 </InputGroup>
               </div>
@@ -92,6 +171,8 @@ function EditProfilePartner() {
                   placeholder="Email"
                   aria-label="Email"
                   aria-describedby="basic-addon1"
+                  name="email"
+                  onChange={handleChange}
                 />
               </InputGroup>
               <InputGroup className="mb-3">
@@ -99,6 +180,8 @@ function EditProfilePartner() {
                   placeholder="Phone"
                   aria-label="Phone"
                   aria-describedby="basic-addon1"
+                  name="phone"
+                  onChange={handleChange}
                 />
               </InputGroup>
               <div className="d-flex justify-content-between">
@@ -107,6 +190,8 @@ function EditProfilePartner() {
                     placeholder="Location"
                     aria-label="Location"
                     aria-describedby="basic-addon1"
+                    name="location"
+                    onChange={handleChange}
                   />
                 </InputGroup>
                 <Button
@@ -125,11 +210,11 @@ function EditProfilePartner() {
                 backgroundColor: "#433434",
                 float: "right",
               }}
-              onClick={navigatePartner}
+              onClick={(e) => handleSubmit(e)}
             >
               Save
             </Button>
-          </div>
+        </Form>
         </div>
       </Container>
     </div>

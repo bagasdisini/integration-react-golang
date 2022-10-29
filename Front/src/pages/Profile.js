@@ -1,13 +1,10 @@
 import Icon from "../assets/Icon.png";
-import PP1 from "../assets/fotoprofile1.png";
 import Container from "react-bootstrap/Container";
 import React, { useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
-import { useQuery } from "react-query";
-import { API } from "../config/api";
 
 function Profile() {
   const navigate = useNavigate();
@@ -15,14 +12,12 @@ function Profile() {
   const navigateEditProfile = () => {
     navigate("/edit-my-profile");
   };
-  
+
   useEffect(() => {
     document.title = "My Profile";
   }, []);
 
-  const [state, dispatch] = useContext(UserContext);
-
-  console.log(`ini state woy`,state);
+  const [state] = useContext(UserContext);
 
   return (
     <div>
@@ -35,13 +30,25 @@ function Profile() {
             <div className="d-flex">
               <div className="d-flex flex-column">
                 <h3 className="fw-bold mb-4">My Profile</h3>
-
-                {state.user.image === "https://localhost:5000/uploads/" ? (
-                  <img src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg" width="150" alt="logo" className="mb-4" style={{objectFit: "cover"}}/>
-                  ):(
-                  <img src="" width="150" alt="logo" className="mb-4" />
-              )}
-                
+                {state.user.image === "http://localhost:5000/uploads/" ? (
+                  <img
+                    src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"
+                    width="200"
+                    height="200"
+                    alt="logo"
+                    className="mb-4"
+                    style={{ objectFit: "cover" }}
+                  />
+                ) : (
+                  <img
+                    src={state.user.image}
+                    width="200"
+                    height="200"
+                    alt="logo"
+                    className="mb-4"
+                    style={{ objectFit: "cover" }}
+                  />
+                )}
                 <Button
                   style={{ backgroundColor: "#433434", border: "none" }}
                   onClick={navigateEditProfile}

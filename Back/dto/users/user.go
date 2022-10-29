@@ -16,6 +16,7 @@ type UpdateUserRequest struct {
 	Gender   string `json:"gender"`
 	Phone    string `json:"phone"`
 	Location string `json:"location"`
+	Image    string `json:"image"`
 }
 
 type UserResponse struct {

@@ -13,9 +13,11 @@ function AddProduct() {
   }, []);
 
   const navigate = useNavigate();
+  const [preview, setPreview] = useState(null);
 
   const [form, setForm] = useState({
     title: "",
+    image: "",
     price: 0,
     category_id: 0,
   });
@@ -26,11 +28,16 @@ function AddProduct() {
     setForm({
       ...form,
       [e.target.name]:
-        e.target.type === "file" ? e.target.files : e.target.value,
+        e.target.type === "file" ? e.target.files[0] : e.target.value,
     });
+
+    if (e.target.type == "file") {
+      const url = URL.createObjectURL(e.target.files[0]);
+      setPreview(url);
+    }
   };
 
-  const handleSubmit = useMutation(async (e) => {
+  const handleSubmit = async (e) => {
     try {
       e.preventDefault();
 
@@ -38,7 +45,9 @@ function AddProduct() {
       const category_id = parseInt(form.category_id);
 
       const formData = new FormData();
-      formData.set("image", form.image[0], form.image[0].name);
+      if (preview) {
+        formData.set("image", form?.image, form?.image.name);
+      }
       formData.set("title", form.title);
       formData.set("price", price);
       formData.set("category_id", category_id);
@@ -49,13 +58,13 @@ function AddProduct() {
         },
       });
 
-      navigate("/profile-partner");
+      navigate("/");
 
       console.log("ini insert product", data);
     } catch (error) {
       console.log(error);
     }
-  });
+  };
 
   return (
     <div>
@@ -115,7 +124,7 @@ function AddProduct() {
                   backgroundColor: "#433434",
                   float: "right",
                 }}
-                onClick={(e) => handleSubmit.mutate(e)}
+                onClick={(e) => handleSubmit(e)}
               >
                 Save
               </Button>

@@ -15,7 +15,19 @@ import Button from "react-bootstrap/Button";
 function Page() {
   const navigate = useNavigate();
 
+  const [show, setShow] = useState(false);
+  const [show1, setShow1] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const handleClose1 = () => setShow1(false);
+  const handleShow1 = () => setShow1(true);
+
   const [state, dispatch] = useContext(UserContext);
+  
+  if (localStorage.token) {
+    setAuthToken(localStorage.token);
+  }
 
   useEffect(() => {
     document.title = "Ways Food";
@@ -59,7 +71,6 @@ function Page() {
 
       setMessage(alert);
     }
-  
   });
 
   const handleSubmitLogin = useMutation(async (e) => {
@@ -67,10 +78,6 @@ function Page() {
       e.preventDefault();
 
       const data = await API.post("/login", form);
-
-      const alert = <Alert variant="success">Login berhasil!</Alert>;
-
-      setMessage(alert);
 
       let payload = data.data.data;
 
@@ -80,28 +87,13 @@ function Page() {
       });
 
       navigate("/");
+      setShow1(false);
 
-      console.log("isi payload", payload);
-      console.log("ini data login", data);
     } catch (error) {
-      console.log(error);
-      const alert = <Alert variant="danger">Email / password salah!</Alert>;
-
-      setMessage(alert);
+      const alert11 = <Alert variant="danger">Email/Password Salah!</Alert>;
+      setMessage(alert11);
     }
   });
-
-  const [show, setShow] = useState(false);
-  const [show1, setShow1] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const handleClose1 = () => setShow1(false);
-  const handleShow1 = () => setShow1(true);
-
-  if (localStorage.token) {
-    setAuthToken(localStorage.token);
-  }
 
   return (
     <div>
@@ -202,6 +194,7 @@ function Page() {
 
       <Modal show={show1} onHide={handleClose1}>
         <Modal.Body>
+        {message && message}
           <Form className="p-3" onSubmit={(e) => handleSubmitLogin.mutate(e)}>
             <h3 className="mb-4 fw-bold" style={{ color: "#FFC700" }}>
               Login
@@ -243,9 +236,6 @@ function Page() {
             <Button
               type="submit"
               style={{ width: "100%", background: "#433434", border: "none" }}
-              onClick={() => {
-                handleClose1();
-              }}
             >
               Login
             </Button>
@@ -320,11 +310,17 @@ function Page() {
                   navigate(`/detail-restaurant/${p.id}`);
                 }}
               >
-                {p.image === "https://localhost:5000/uploads/" ? (
-                  <img src={p.image} alt="" />
-                ) : (
+                {p.image === "http://localhost:5000/uploads/" ? (
                   <img
                     src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"
+                    alt=""
+                    width="60px"
+                    height="60px"
+                    style={{ borderRadius: "50%" }}
+                  />
+                ) : (
+                  <img
+                    src={p.image}
                     alt=""
                     width="60px"
                     height="60px"
@@ -362,14 +358,20 @@ function Page() {
                 }}
                 key={p.id}
                 onClick={() => {
-                  handleShow();
+                  handleShow1();
                 }}
               >
-                {p.image === "https://localhost:5000/uploads/" ? (
-                  <img src={p.image} alt="" />
-                ) : (
+               {p.image === "http://localhost:5000/uploads/" ? (
                   <img
                     src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"
+                    alt=""
+                    width="60px"
+                    height="60px"
+                    style={{ borderRadius: "50%" }}
+                  />
+                ) : (
+                  <img
+                    src={p.image}
                     alt=""
                     width="60px"
                     height="60px"

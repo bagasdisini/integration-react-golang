@@ -17,8 +17,8 @@ function Cart({
 }) {
   const navigate = useNavigate();
 
-  const navigateDetailRest = () => {
-    navigate("/detail-restaurant");
+  const navigateHome = () => {
+    navigate("/");
   };
 
   const [show, setShow] = useState(false);
@@ -176,7 +176,7 @@ function Cart({
                       backgroundColor: "#433434",
                       border: "none",
                     }}
-                    onClick={navigateDetailRest}
+                    onClick={navigateHome}
                   >
                     Add more foods!
                   </Button>

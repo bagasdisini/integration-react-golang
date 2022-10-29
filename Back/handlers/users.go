@@ -4,7 +4,6 @@ import (
 	dto "backend/dto/result"
 	usersdto "backend/dto/users"
 	"backend/models"
-	"backend/pkg/bcrypt"
 	"backend/repositories"
 	"encoding/json"
 	"net/http"
@@ -60,177 +59,171 @@ func (h *handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
-	roleInfo := r.Context().Value("authInfo").(jwt.MapClaims)
-	roleStr := string(roleInfo["role"].(string))
-
-	if roleStr == "user" {
-		user, err := h.UserRepository.GetUserByIDUser(id)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
-			json.NewEncoder(w).Encode(response)
-			return
-		}
-
-		if user.ID == 0 {
-			w.WriteHeader(http.StatusNotFound)
-			response := dto.ErrorResult{Status: http.StatusNotFound, Message: "ID: " + strconv.Itoa(id) + " not found!"}
-			json.NewEncoder(w).Encode(response)
-			return
-		}
-
-		user.Image = "http://localhost:5000/uploads/" + user.Image
-
-		w.WriteHeader(http.StatusOK)
-		response := dto.SuccessResult{Status: http.StatusOK, Data: user}
+	user, err := h.UserRepository.GetUserByIDUser(id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
 		json.NewEncoder(w).Encode(response)
+		return
 	}
 
-	if roleStr == "admin" {
-		user, err := h.UserRepository.GetUserByIDAdmin(id)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
-			json.NewEncoder(w).Encode(response)
-			return
-		}
-
-		if user.ID == 0 {
-			w.WriteHeader(http.StatusNotFound)
-			response := dto.ErrorResult{Status: http.StatusNotFound, Message: "ID: " + strconv.Itoa(id) + " not found!"}
-			json.NewEncoder(w).Encode(response)
-			return
-		}
-
-		user.Image = "http://localhost:5000/uploads/" + user.Image
-
-		w.WriteHeader(http.StatusOK)
-		response := dto.SuccessResult{Status: http.StatusOK, Data: user}
+	if user.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		response := dto.ErrorResult{Status: http.StatusNotFound, Message: "ID: " + strconv.Itoa(id) + " not found!"}
 		json.NewEncoder(w).Encode(response)
+		return
 	}
+
+	user.Image = "http://localhost:5000/uploads/" + user.Image
+
+	w.WriteHeader(http.StatusOK)
+	response := dto.SuccessResult{Status: http.StatusOK, Data: user}
+	json.NewEncoder(w).Encode(response)
+}
+
+func (h *handler) GetAdminByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	id, _ := strconv.Atoi(mux.Vars(r)["id"])
+	user, err := h.UserRepository.GetUserByIDAdmin(id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if user.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		response := dto.ErrorResult{Status: http.StatusNotFound, Message: "ID: " + strconv.Itoa(id) + " not found!"}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	user.Image = "http://localhost:5000/uploads/" + user.Image
+
+	w.WriteHeader(http.StatusOK)
+	response := dto.SuccessResult{Status: http.StatusOK, Data: user}
+	json.NewEncoder(w).Encode(response)
 }
 
 func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	roleInfo := r.Context().Value("authInfo").(jwt.MapClaims)
-	roleStr := string(roleInfo["role"].(string))
+	dataUpload := r.Context().Value("dataFile")
+	filename := ""
 
-	if roleStr == "user" {
-		request := new(usersdto.UpdateUserRequest)
-		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
-			json.NewEncoder(w).Encode(response)
-			return
-		}
-
-		id, _ := strconv.Atoi(mux.Vars(r)["id"])
-
-		user := models.User{}
-
-		user.ID = id
-
-		if request.FullName != "" {
-			user.FullName = request.FullName
-		}
-
-		if request.Email != "" {
-			user.Email = request.Email
-		}
-
-		if request.Password != "" {
-			password, err := bcrypt.HashingPassword(request.Password)
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				response := dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()}
-				json.NewEncoder(w).Encode(response)
-			}
-			user.Password = password
-		}
-
-		if request.Phone != "" {
-			user.Phone = request.Phone
-		}
-
-		if request.Location != "" {
-			user.Location = request.Location
-		}
-
-		if request.Gender != "" {
-			user.Gender = request.Gender
-		}
-
-		data, err := h.UserRepository.UpdateUser(user, id)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			response := dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()}
-			json.NewEncoder(w).Encode(response)
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-		response := dto.SuccessResult{Status: http.StatusOK, Data: data}
-		json.NewEncoder(w).Encode(response)
+	if dataUpload != nil {
+		filename = dataUpload.(string)
+	}
+	request := usersdto.UpdateUserRequest{
+		FullName: r.FormValue("fullName"),
+		Email:    r.FormValue("email"),
+		Phone:    r.FormValue("phone"),
+		Location: r.FormValue("location"),
 	}
 
-	if roleStr == "admin" {
-		request := new(usersdto.UpdateUserRequest)
-		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
-			json.NewEncoder(w).Encode(response)
-			return
-		}
+	id, _ := strconv.Atoi(mux.Vars(r)["id"])
 
-		id, _ := strconv.Atoi(mux.Vars(r)["id"])
+	user := models.User{}
 
-		user := models.Admin{}
+	user.ID = id
 
-		user.ID = id
-
-		if request.FullName != "" {
-			user.FullName = request.FullName
-		}
-
-		if request.Email != "" {
-			user.Email = request.Email
-		}
-
-		if request.Password != "" {
-			password, err := bcrypt.HashingPassword(request.Password)
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				response := dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()}
-				json.NewEncoder(w).Encode(response)
-			}
-			user.Password = password
-		}
-
-		if request.Phone != "" {
-			user.Phone = request.Phone
-		}
-
-		if request.Location != "" {
-			user.Location = request.Location
-		}
-
-		if request.Gender != "" {
-			user.Gender = request.Gender
-		}
-
-		data, err := h.UserRepository.UpdateAdmin(user, id)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			response := dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()}
-			json.NewEncoder(w).Encode(response)
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-		response := dto.SuccessResult{Status: http.StatusOK, Data: data}
-		json.NewEncoder(w).Encode(response)
+	if request.FullName != "" {
+		user.FullName = request.FullName
 	}
+
+	if request.Email != "" {
+		user.Email = request.Email
+	}
+
+	if request.Phone != "" {
+		user.Phone = request.Phone
+	}
+
+	if filename != "" {
+		user.Image = filename
+	}
+
+	if request.Location != "" {
+		user.Location = request.Location
+	}
+
+	if request.Gender != "" {
+		user.Gender = request.Gender
+	}
+
+	data, err := h.UserRepository.UpdateUser(user, id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		response := dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	response := dto.SuccessResult{Status: http.StatusOK, Data: data}
+	json.NewEncoder(w).Encode(response)
+}
+
+func (h *handler) UpdateAdmin(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	dataUpload := r.Context().Value("dataFile")
+	filename := ""
+
+	if dataUpload != nil {
+		filename = dataUpload.(string)
+	}
+
+	request := usersdto.UpdateUserRequest{
+		FullName: r.FormValue("fullName"),
+		Email:    r.FormValue("email"),
+		Phone:    r.FormValue("phone"),
+		Location: r.FormValue("location"),
+	}
+
+	id, _ := strconv.Atoi(mux.Vars(r)["id"])
+
+	user := models.Admin{}
+
+	user.ID = id
+
+	if request.FullName != "" {
+		user.FullName = request.FullName
+	}
+
+	if request.Email != "" {
+		user.Email = request.Email
+	}
+
+	if filename != "" {
+		user.Image = filename
+	}
+
+	if request.Phone != "" {
+		user.Phone = request.Phone
+	}
+
+	if request.Location != "" {
+		user.Location = request.Location
+	}
+
+	if request.Gender != "" {
+		user.Gender = request.Gender
+	}
+
+	data, err := h.UserRepository.UpdateAdmin(user, id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		response := dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	response := dto.SuccessResult{Status: http.StatusOK, Data: data}
+	json.NewEncoder(w).Encode(response)
 }
 
 func (h *handler) DeleteUser(w http.ResponseWriter, r *http.Request) {

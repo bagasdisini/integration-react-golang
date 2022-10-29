@@ -4,7 +4,6 @@ import Icon from "../assets/Icon.png";
 import Cart from "../assets/cart.png";
 import Dropdown from "react-bootstrap/Dropdown";
 import Logout from "../assets/export.png";
-import PP from "../assets/fotoprofile.png";
 import Profile from "../assets/profile.png";
 import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
@@ -17,7 +16,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Alert } from "react-bootstrap";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
-import { useQuery } from "react-query";
 
 function Navigation({ totalItems }) {
   const [show, setShow] = useState(false);
@@ -47,11 +45,11 @@ function Navigation({ totalItems }) {
   };
 
   const [state, dispatch] = useContext(UserContext);
-  
+
   const navigateProfile = () => {
     navigate(`/my-profile`);
   };
-  
+
   const [message, setMessage] = useState(null);
 
   const [form, setForm] = useState({
@@ -78,15 +76,12 @@ function Navigation({ totalItems }) {
 
       const response = await API.post("/register", form);
 
-      const alert = (
-        <Alert variant="success">Berhasil register!</Alert>
-      );
+      const alert = <Alert variant="success">Berhasil register!</Alert>;
 
       setMessage(alert);
 
       console.log("ini response register", response);
     } catch (e) {
-      console.log(e);
       const alert = <Alert variant="danger">Register gagal!</Alert>;
 
       setMessage(alert);
@@ -107,24 +102,25 @@ function Navigation({ totalItems }) {
       });
 
       navigate("/");
+      setShow1(false);
 
-      console.log("isi payload", payload);
-      console.log("ini data login", data);
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      const alert = <Alert variant="danger">Email/Password Salah!</Alert>;
+
+      setMessage(alert);
     }
   });
 
   const LogoutHandle = () => {
     dispatch({
-        type: "LOGOUT"
-    })
-    navigate("/")
-}
+      type: "LOGOUT",
+    });
+    navigate("/");
+  };
 
-if (localStorage.token) {
-  setAuthToken(localStorage.token);
-}
+  if (localStorage.token) {
+    setAuthToken(localStorage.token);
+  }
 
   return (
     <Navbar style={{ backgroundColor: "#FFC700" }} className="sticky-top">
@@ -148,7 +144,7 @@ if (localStorage.token) {
             <Form.Group className="mb-3">
               <Form.Control
                 type="password"
-                value={password} 
+                value={password}
                 placeholder="Password"
                 style={{ backgroundColor: "#F4F4F4" }}
                 onChange={handleChange}
@@ -165,10 +161,7 @@ if (localStorage.token) {
                 name="fullName"
               />
             </Form.Group>
-            <Form.Group
-              className="mb-3"
-              style={{ backgroundColor: "#F4F4F4" }}
-            >
+            <Form.Group className="mb-3" style={{ backgroundColor: "#F4F4F4" }}>
               <Form.Select
                 style={{ backgroundColor: "#F4F4F4" }}
                 value={gender}
@@ -229,7 +222,7 @@ if (localStorage.token) {
 
       <Modal show={show1} onHide={handleClose1}>
         <Modal.Body>
-        {message && message}
+          {message && message}
           <Form className="p-3" onSubmit={(e) => handleSubmitLogin.mutate(e)}>
             <h3 className="mb-4 fw-bold" style={{ color: "#FFC700" }}>
               Login
@@ -271,9 +264,6 @@ if (localStorage.token) {
             <Button
               type="submit"
               style={{ width: "100%", background: "#433434", border: "none" }}
-              onClick={() => {
-                handleClose1();
-              }}
             >
               Login
             </Button>
@@ -304,7 +294,7 @@ if (localStorage.token) {
           onClick={navigateHome}
           style={{ cursor: "pointer" }}
         />
-        {state.user.role ===  "user" ? (
+        {state.user.role === "user" ? (
           <div
             style={{ float: "right", marginRight: "70px" }}
             className="d-flex align-items-center"
@@ -339,7 +329,23 @@ if (localStorage.token) {
                   border: "none",
                 }}
               >
-                <img src={PP} alt="logo" width="40px" height="40px" />
+                {state.user.image === "http://localhost:5000/uploads/" ? (
+                  <img
+                    src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"
+                    alt="logo"
+                    width="40px"
+                    height="40px"
+                    style={{ objectFit: "cover", borderRadius: "50%" }}
+                  />
+                ) : (
+                  <img
+                    src={state.user.image}
+                    alt="logo"
+                    width="40px"
+                    height="40px"
+                    style={{ objectFit: "cover", borderRadius: "50%" }}
+                  />
+                )}
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
@@ -367,8 +373,8 @@ if (localStorage.token) {
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-          </div> 
-        ) : state.user.role  ===  "admin" ? (
+          </div>
+        ) : state.user.role === "admin" ? (
           <div
             style={{ float: "right", marginRight: "70px" }}
             className="d-flex align-items-center"
@@ -381,7 +387,23 @@ if (localStorage.token) {
                   border: "none",
                 }}
               >
-                <img src={PP} alt="logo" width="40px" height="40px" />
+                {state.user.image === "http://localhost:5000/uploads/" ? (
+                  <img
+                    src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"
+                    alt="logo"
+                    width="40px"
+                    height="40px"
+                    style={{ objectFit: "cover", borderRadius: "50%" }}
+                  />
+                ) : (
+                  <img
+                    src={state.user.image}
+                    alt="logo"
+                    width="40px"
+                    height="40px"
+                    style={{ objectFit: "cover", borderRadius: "50%" }}
+                  />
+                )}
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
