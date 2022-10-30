@@ -59,8 +59,8 @@ function Detail({ addItem }) {
           <div className="d-flex justify-content-evenly flex-wrap">
             {products?.map((p) => (
               <Card style={{ width: "14rem" }} className="p-2 mb-3" key={p.id}>
-                <Card.Img variant="top" src={p.image} />
-                <Card.Body className="py-3 px-1">
+                <Card.Img variant="top" src={p.image} style={{ objectFit: "cover", width:"100%", height:"120px"  }}/>
+                <Card.Body className="py-3 px-1" >
                   <Card.Title className="fs-6">{p.title}</Card.Title>
                   <Card.Text className="text-danger">
                     {toRupiah(p.price, { dot: ",", floatingPoint: 0 })}

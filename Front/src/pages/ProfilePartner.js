@@ -72,8 +72,8 @@ function ProfilePartner() {
                 {state.user.image === "http://localhost:5000/uploads/" ? (
                   <img
                     src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"
-                    width="200"
-                    height="200"
+                    width="200px"
+                    height="200px"
                     alt="logo"
                     className="mb-4"
                     style={{ objectFit: "cover" }}
@@ -81,8 +81,8 @@ function ProfilePartner() {
                 ) : (
                   <img
                     src={state.user.image}
-                    width="200"
-                    height="200"
+                    width="200px"
+                    height="200px"
                     alt="logo"
                     className="mb-4"
                     style={{ objectFit: "cover" }}
@@ -192,7 +192,7 @@ function ProfilePartner() {
               className="p-2 mb-3"
               key={p.id}
             >
-              <Card.Img variant="top" src={p.image} />
+              <Card.Img variant="top" src={p.image} style={{ objectFit: "cover", width:"100%", height:"120px"  }}/>
               <Card.Body className="py-3 px-1">
                 <Card.Title className="fs-6">{p.title}</Card.Title>
                 <Card.Text className="text-danger">

@@ -315,7 +315,7 @@ function Page() {
                     alt=""
                     width="60px"
                     height="60px"
-                    style={{ borderRadius: "50%" }}
+                    style={{ borderRadius: "50%", objectFit: "cover" }}
                   />
                 ) : (
                   <img
@@ -323,7 +323,7 @@ function Page() {
                     alt=""
                     width="60px"
                     height="60px"
-                    style={{ borderRadius: "50%" }}
+                    style={{ borderRadius: "50%", objectFit: "cover" }}
                   />
                 )}
                 <span className="fw-bold ms-3" style={{ fontSize: "18px" }}>
