@@ -8,6 +8,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
 import { API } from "../config/api";
+import toRupiah from "@develoka/angka-rupiah-js";
 
 function Cart({
   items,
@@ -15,7 +16,7 @@ function Cart({
   removeItem,
   cartTotal,
   totalItems,
-  emptyCart
+  emptyCart,
 }) {
   const navigate = useNavigate();
 
@@ -51,8 +52,6 @@ function Cart({
   if (totalItems > 0) {
     adminID = items[0].admin_id;
   }
-
-  console.log(adminID);
 
   const [form, setForm] = useState({
     value: cartTotal,
@@ -202,7 +201,7 @@ function Cart({
                         <div className="d-flex align-items-center justify-content-end">
                           <div>
                             <p className="text-danger">
-                              {item.quantity * item.price}
+                            {toRupiah(item.quantity * item.price, { dot: ",", floatingPoint: 0 })}
                             </p>
                             <img
                               src={Bin}
@@ -240,7 +239,7 @@ function Cart({
                       <p>Ongkir</p>
                     </div>
                     <div style={{ textAlign: "right" }}>
-                      <p className="text-danger">{cartTotal}</p>
+                      <p className="text-danger">{toRupiah(cartTotal, { dot: ",", floatingPoint: 0 })}</p>
                       <p>{totalItems}</p>
                       <p className="text-danger">Rp10.000</p>
                     </div>
@@ -248,7 +247,7 @@ function Cart({
                   <hr style={{ marginTop: "-3px", opacity: "100%" }}></hr>
                   <div className="d-flex justify-content-between">
                     <p className="text-danger">Total</p>
-                    <p className="text-danger">{cartTotal + 10000}</p>
+                    <p className="text-danger">{toRupiah(cartTotal+10000, { dot: ",", floatingPoint: 0 })}</p>
                   </div>
                 </div>
               </div>
@@ -279,16 +278,18 @@ function Cart({
                   {" "}
                   <span>Oops!</span> Food not found.
                 </p>
-                <p className="lead mb-4">The food you’re looking for doesn’t exist in your cart.</p>
+                <p className="lead mb-4">
+                  The food you’re looking for doesn’t exist in your cart.
+                </p>
                 <Button
-                    style={{
-                      backgroundColor: "#433434",
-                      border: "none",
-                    }}
-                    onClick={navigateHome}
-                  >
-                    Go Shopping!
-                  </Button>
+                  style={{
+                    backgroundColor: "#433434",
+                    border: "none",
+                  }}
+                  onClick={navigateHome}
+                >
+                  Go Shopping!
+                </Button>
               </div>
             </div>
           </div>

@@ -8,9 +8,9 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import toRupiah from "@develoka/angka-rupiah-js";
 
 function Detail({ addItem }) {
-
   const [state] = useContext(UserContext);
 
   const showToastMessage = () => {
@@ -62,7 +62,9 @@ function Detail({ addItem }) {
                 <Card.Img variant="top" src={p.image} />
                 <Card.Body className="py-3 px-1">
                   <Card.Title className="fs-6">{p.title}</Card.Title>
-                  <Card.Text className="text-danger">{p.price}</Card.Text>
+                  <Card.Text className="text-danger">
+                    {toRupiah(p.price, { dot: ",", floatingPoint: 0 })}
+                  </Card.Text>
 
                   {state.user.role == "user" ? (
                     <Button

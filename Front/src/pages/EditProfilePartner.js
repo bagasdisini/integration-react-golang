@@ -25,7 +25,6 @@ function EditProfilePartner() {
     document.title = "Edit Profile Partner";
   }, []);
 
-
   const [form, setForm] = useState({
     fullName: "",
     image: "",
@@ -81,7 +80,7 @@ function EditProfilePartner() {
       formData.set("location", form.location);
 
       const response = await API.patch(`/admin/${idid}`, formData);
-      
+
       const auth = await API.get("/check-auth");
 
       let payload = auth.data.data;
@@ -144,6 +143,19 @@ function EditProfilePartner() {
         <div className="m-5" style={{ width: "90%" }}>
           <Form>
             <h3 className="fw-bold mb-4">Edit Profile Partner</h3>
+            {preview && (
+              <div className="mb-3">
+                <img
+                  src={preview}
+                  style={{
+                    width: "140px",
+                    height: "140px",
+                    objectFit: "cover",
+                  }}
+                  alt={preview}
+                />
+              </div>
+            )}
             <div>
               <div className="d-flex justify-content-between">
                 <InputGroup className="mb-3" style={{ width: "69%" }}>
@@ -218,7 +230,7 @@ function EditProfilePartner() {
             >
               Save
             </Button>
-        </Form>
+          </Form>
         </div>
       </Container>
     </div>

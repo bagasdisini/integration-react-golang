@@ -4,7 +4,6 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "react-query";
 import { API } from "../config/api";
 
 function AddProduct() {
@@ -21,8 +20,6 @@ function AddProduct() {
     price: 0,
     category_id: 0,
   });
-
-  console.log(form);
 
   const handleChange = (e) => {
     setForm({
@@ -58,9 +55,7 @@ function AddProduct() {
         },
       });
 
-      navigate("/");
-
-      console.log("ini insert product", data);
+      navigate("/profile-partner");
     } catch (error) {
       console.log(error);
     }
@@ -76,6 +71,19 @@ function AddProduct() {
           <div>
             <h3 className="fw-bold mb-4">Add Product</h3>
             <Form>
+              {preview && (
+                <div className="mb-3">
+                  <img
+                    src={preview}
+                    style={{
+                      width: "140px",
+                      height: "140px",
+                      objectFit: "cover",
+                    }}
+                    alt={preview}
+                  />
+                </div>
+              )}
               <div className="d-flex justify-content-between">
                 <InputGroup className="mb-3" style={{ width: "69%" }}>
                   <Form.Control

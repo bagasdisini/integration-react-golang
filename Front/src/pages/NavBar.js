@@ -79,8 +79,6 @@ function Navigation({ totalItems, emptyCart }) {
       const alert = <Alert variant="success">Berhasil register!</Alert>;
 
       setMessage(alert);
-
-      console.log("ini response register", response);
     } catch (e) {
       const alert = <Alert variant="danger">Register gagal!</Alert>;
 
@@ -103,7 +101,6 @@ function Navigation({ totalItems, emptyCart }) {
 
       navigate("/");
       setShow1(false);
-
     } catch (e) {
       const alert = <Alert variant="danger">Email/Password Salah!</Alert>;
 

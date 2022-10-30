@@ -80,7 +80,7 @@ function EditProfile() {
       formData.set("location", form.location);
 
       const response = await API.patch(`/user/${idid}`, formData);
-      
+
       const auth = await API.get("/check-auth");
 
       let payload = auth.data.data;
@@ -143,6 +143,19 @@ function EditProfile() {
         <div className="m-5" style={{ width: "90%" }}>
           <Form>
             <h3 className="fw-bold mb-4">Edit Profile</h3>
+            {preview && (
+              <div className="mb-3">
+                <img
+                  src={preview}
+                  style={{
+                    width: "140px",
+                    height: "140px",
+                    objectFit: "cover",
+                  }}
+                  alt={preview}
+                />
+              </div>
+            )}
             <div>
               <div className="d-flex justify-content-between">
                 <InputGroup className="mb-3" style={{ width: "69%" }}>
@@ -150,6 +163,7 @@ function EditProfile() {
                     placeholder="Full Name"
                     aria-label="FullName"
                     aria-describedby="basic-addon1"
+                    value={form.fullName}
                     name="fullName"
                     onChange={handleChange}
                   />
@@ -169,6 +183,7 @@ function EditProfile() {
                 <Form.Control
                   placeholder="Email"
                   aria-label="Email"
+                  value={form.email}
                   aria-describedby="basic-addon1"
                   name="email"
                   onChange={handleChange}
@@ -178,6 +193,7 @@ function EditProfile() {
                 <Form.Control
                   placeholder="Phone"
                   aria-label="Phone"
+                  value={form.phone}
                   aria-describedby="basic-addon1"
                   name="phone"
                   onChange={handleChange}
@@ -188,6 +204,7 @@ function EditProfile() {
                   <Form.Control
                     placeholder="Location"
                     aria-label="Location"
+                    value={form.location}
                     aria-describedby="basic-addon1"
                     name="location"
                     onChange={handleChange}

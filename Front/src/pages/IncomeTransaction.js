@@ -1,15 +1,26 @@
-import Checked from "../assets/checked.png";
-import Cancel from "../assets/cancel.png";
 import Container from "react-bootstrap/Container";
 import React, { useEffect } from "react";
 import Table from "react-bootstrap/Table";
-import Button from "react-bootstrap/Button";
+import { API } from "../config/api";
+import { useQuery } from "react-query";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
+import toRupiah from "@develoka/angka-rupiah-js";
 
 function Transaction() {
-
   useEffect(() => {
     document.title = "Income Transaction";
   }, []);
+
+  const [state] = useContext(UserContext);
+
+  let { data: transactions } = useQuery("mytransactions12Cache", async () => {
+    const response = await API.get("/my-transactions");
+    const response2 = response.data.data.filter(
+      (p) => p.admin_id == state.user.id
+    );
+    return response2;
+  });
 
   return (
     <div>
@@ -24,60 +35,123 @@ function Transaction() {
               <Table bordered hover style={{ border: "1px" }}>
                 <thead style={{ backgroundColor: "#E5E5E5" }}>
                   <tr>
-                    <th>No</th>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Products Order</th>
-                    <th>Status</th>
-                    <th>Action</th>
+                    <th
+                      style={{
+                        wordBreak: "break-all",
+                        width: "5%",
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                      }}
+                    >
+                      No
+                    </th>
+                    <th
+                      style={{
+                        wordBreak: "break-all",
+                        width: "15%",
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                      }}
+                    >
+                      Date
+                    </th>
+                    <th
+                      style={{
+                        wordBreak: "break-all",
+                        width: "35%",
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                      }}
+                    >
+                      Products Order
+                    </th>
+                    <th
+                      style={{
+                        wordBreak: "break-all",
+                        width: "13%",
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                      }}
+                    >
+                      Value
+                    </th>
+                    <th
+                      style={{
+                        wordBreak: "break-all",
+                        width: "5%",
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                      }}
+                    >
+                      Status
+                    </th>
                   </tr>
                 </thead>
                 <tbody style={{ backgroundColor: "white" }}>
-                  <tr>
-                    <td>1</td>
-                    <td>Sugeng No Pants</td>
-                    <td>Cileungsi</td>
-                    <td>Pkaket Geprek, Paket ke..</td>
-                    <td className="text-warning">Waiting Approve</td>
-                    <td className="d-flex justify-content-evenly p-1">
-                      <Button className="py-1 px-3 bg-danger border-0">
-                        Cancel
-                      </Button>
-                      <Button className="py-1 px-3 bg-success border-0">
-                        Approve
-                      </Button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>Haris Gams</td>
-                    <td>Serang</td>
-                    <td>Pkaket Geprek, Paket ke..</td>
-                    <td className="text-success">Success</td>
-                    <td className="d-flex justify-content-center">
-                      <img src={Checked} alt="centang"></img>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td>Aziz Union</td>
-                    <td>Bekasi</td>
-                    <td>Pkaket Geprek, Paket ke..</td>
-                    <td className="text-danger">Cancel</td>
-                    <td className="d-flex justify-content-center">
-                      <img src={Cancel} alt="cancel"></img>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>4</td>
-                    <td>Lae Tanjung Balai</td>
-                    <td>Tanjung Balai</td>
-                    <td>Pkaket Geprek, Paket ke..</td>
-                    <td className="text-primary">On The Way</td>
-                    <td className="d-flex justify-content-center">
-                      <img src={Checked} alt="centang"></img>
-                    </td>
-                  </tr>
+                  {transactions?.map((p) => (
+                    <tr>
+                      <td
+                        style={{
+                          wordBreak: "break-all",
+                          width: "5%",
+                          textAlign: "center",
+                          verticalAlign: "middle",
+                        }}
+                        key={p.id}
+                      >
+                        {p.id}
+                      </td>
+                      <td
+                        style={{
+                          wordBreak: "break-all",
+                          width: "15%",
+                          textAlign: "center",
+                          verticalAlign: "middle",
+                        }}
+                      >
+                        {p.date}
+                      </td>
+                      <td style={{ wordBreak: "break-all", width: "35%" }}>
+                        {p.product}
+                      </td>
+                      <td
+                        style={{
+                          wordBreak: "break-all",
+                          width: "13%",
+                          verticalAlign: "middle",
+                        }}
+                      >
+                        {toRupiah(p.value, { dot: ",", floatingPoint: 0 })}
+                      </td>
+
+                        {p.status == "Pending"?
+                        <td
+                        style={{
+                          wordBreak: "break-all",
+                          width: "10%",
+                          textAlign: "center",
+                          verticalAlign: "middle",
+                        }}
+                      >
+                         <span className="text-warning">{p.status}</span>
+                      </td>
+
+                      :
+                       <td
+                       style={{
+                         wordBreak: "break-all",
+                         width: "10%",
+                         textAlign: "center",
+                         verticalAlign: "middle",
+                       }}
+                     >
+                       <span style={{color: "green"}}>{p.status}</span>
+                     </td>
+                      }
+                     
+
+                    </tr>
+                  ))}
                 </tbody>
               </Table>
             </div>

@@ -10,6 +10,7 @@ import EditProfile from "./pages/EditProfile";
 import EditProfilePartner from "./pages/EditProfilePartner";
 import AddProduct from "./pages/AddProduct";
 import Transaction from "./pages/IncomeTransaction";
+import EditProduct from "./pages/EditProduct";
 import {
   BrowserRouter as Router,
   Route,
@@ -54,8 +55,6 @@ function App() {
         type: "USER_SUCCESS",
         payload,
       });
-      console.log(state);
-      console.log("response", response);
     } catch (error) {
       console.log(error);
     }
@@ -92,6 +91,7 @@ function App() {
         <Route path="/edit-my-profile" element={<EditProfile />} />
         <Route path="/edit-profile-partner" element={<EditProfilePartner />} />
         <Route path="/add-product" element={<AddProduct />} />
+        <Route path="/edit-product/:id" element={<EditProduct />} />
         <Route path="/transaction" element={<Transaction />} />
       </Routes>
     </CartProvider>

@@ -1,13 +1,14 @@
 import Container from "react-bootstrap/Container";
 import Icon from "../assets/Icon.png";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
-import { API } from "../config/api";
+import { API, setAuthToken } from "../config/api";
 import { useQuery } from "react-query";
 import Card from "react-bootstrap/Card";
+import toRupiah from "@develoka/angka-rupiah-js";
 
 function ProfilePartner() {
   const navigate = useNavigate();
@@ -19,6 +20,10 @@ function ProfilePartner() {
   const navigateTransaction = () => {
     navigate("/transaction");
   };
+
+  if (localStorage.token) {
+    setAuthToken(localStorage.token);
+  }
 
   useEffect(() => {
     document.title = "My Profile Partner";
@@ -34,13 +39,24 @@ function ProfilePartner() {
     return response2;
   });
 
-  let { data: products } = useQuery("productsCache", async () => {
+  let { data: products, refetch } = useQuery("productsCache", async () => {
     const response = await API.get("/products");
     const response2 = response.data.data.filter(
       (p) => p.admin_id == state.user.id
     );
     return response2;
   });
+
+  console.log(products);
+
+  const deleteById = async (id) => {
+    try {
+      await API.delete(`/product/${id}`);
+      refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -98,11 +114,16 @@ function ProfilePartner() {
               >
                 {transactions?.map((p) => (
                   <div
-                    style={{ backgroundColor: "white", height: "120px" }}
+                    style={{ backgroundColor: "white" }}
                     className="p-3 d-flex justify-content-between my-3"
                   >
                     <div>
-                      <p className="fw-bold">{p.product}</p>
+                      <p
+                        className="fw-bold"
+                        style={{ wordBreak: "break-all", width: "90%" }}
+                      >
+                        {p.product}
+                      </p>
                       <p style={{ marginTop: "-12px", fontSize: "13px" }}>
                         <span>{p.date}</span>
                       </p>
@@ -110,7 +131,8 @@ function ProfilePartner() {
                         style={{ fontSize: "13px", marginBottom: "0px" }}
                         className="fw-bold"
                       >
-                        Total : {p.value}
+                        Total :
+                        {toRupiah(p.value, { dot: ",", floatingPoint: 0 })}
                       </p>
                     </div>
                     <div>
@@ -127,6 +149,7 @@ function ProfilePartner() {
                             color: "white",
                             border: "none",
                           }}
+                          onClick={navigateTransaction}
                         >
                           {p.status}
                         </Button>
@@ -141,6 +164,7 @@ function ProfilePartner() {
                             border: "none",
                             width: "145px",
                           }}
+                          onClick={navigateTransaction}
                         >
                           {p.status}
                         </Button>
@@ -171,20 +195,37 @@ function ProfilePartner() {
               <Card.Img variant="top" src={p.image} />
               <Card.Body className="py-3 px-1">
                 <Card.Title className="fs-6">{p.title}</Card.Title>
-                <Card.Text className="text-danger">{p.price}</Card.Text>
+                <Card.Text className="text-danger">
+                  {toRupiah(p.price, { dot: ",", floatingPoint: 0 })}
+                </Card.Text>
                 <Button
                   style={{
                     marginBottom: "-10px",
-                    width: "100%",
+                    width: "47%",
                     backgroundColor: "#FFC700",
                     border: "none",
                   }}
                   className="py-1 text-dark"
-                  //   onClick={() => {
-                  //   (p);
-                  // }}
+                  onClick={() => {
+                    navigate(`/edit-product/${p.id}`);
+                  }}
                 >
                   Edit
+                </Button>
+                <Button
+                  style={{
+                    marginBottom: "-10px",
+                    width: "47%",
+                    backgroundColor: "#F15E5E",
+                    border: "none",
+                    float: "right",
+                  }}
+                  className="py-1"
+                  onClick={() => {
+                    deleteById(p.id);
+                  }}
+                >
+                  Delete
                 </Button>
               </Card.Body>
             </Card>

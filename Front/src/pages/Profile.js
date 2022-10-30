@@ -7,6 +7,7 @@ import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { API } from "../config/api";
 import { useQuery } from "react-query";
+import toRupiah from "@develoka/angka-rupiah-js";
 
 function Profile() {
   const navigate = useNavigate();
@@ -77,17 +78,24 @@ function Profile() {
             </div>
             <div style={{ width: "45%" }}>
               <h3 className="fw-bold mb-4">History Transaction</h3>
-              <div style={{
-                overflowY: "scroll",
-                height: "400px"
-              }}>
-              {transactions?.map((p) => (
+              <div
+                style={{
+                  overflowY: "scroll",
+                  height: "400px",
+                }}
+              >
+                {transactions?.map((p) => (
                   <div
                     style={{ backgroundColor: "white" }}
                     className="p-3 d-flex justify-content-between my-3"
                   >
                     <div>
-                      <p className="fw-bold">{p.product}</p>
+                      <p
+                        className="fw-bold"
+                        style={{ wordBreak: "break-all", width: "90%" }}
+                      >
+                        {p.product}
+                      </p>
                       <p style={{ marginTop: "-12px", fontSize: "13px" }}>
                         <span>{p.date}</span>
                       </p>
@@ -95,7 +103,7 @@ function Profile() {
                         style={{ fontSize: "13px", marginBottom: "0px" }}
                         className="fw-bold"
                       >
-                        Total : {p.value}
+                        Total : {toRupiah(p.value, { dot: ",", floatingPoint: 0 })}
                       </p>
                     </div>
                     <div>
@@ -132,7 +140,7 @@ function Profile() {
                       )}
                     </div>
                   </div>
-              ))}
+                ))}
               </div>
             </div>
           </div>
