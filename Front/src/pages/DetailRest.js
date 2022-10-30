@@ -26,7 +26,7 @@ function Detail({ addItem }) {
   };
 
   useEffect(() => {
-    document.title = "Geprek Bensu's Menu";
+    document.title = "Restaurant Menu";
   }, []);
 
   let { id } = useParams();

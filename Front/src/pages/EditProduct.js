@@ -4,7 +4,6 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation } from "react-query";
 import { API } from "../config/api";
 import { useQuery } from "react-query";
 
@@ -54,8 +53,6 @@ function EditProduct() {
       });
     }
   }, [product]);
-
-  console.log(form);
 
   const handleSubmit = async (e) => {
     try {

@@ -21,6 +21,24 @@ function EditProfilePartner() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    }
+  }
+
+  const [mapLong, setMapLong] = useState();
+  const [mapLat, setMapLat] = useState();
+
+  function showPosition(position) {
+    const long = position.coords.longitude;
+    const lat = position.coords.latitude;
+    setMapLong(long);
+    setMapLat(lat);
+  }
+
+  const mapLongLat = `${mapLong}, ${mapLat}`;
+
   useEffect(() => {
     document.title = "Edit Profile Partner";
   }, []);
@@ -48,7 +66,7 @@ function EditProfilePartner() {
         email: user.email,
         image: user.image,
         phone: user.phone,
-        location: user.location,
+        location: mapLongLat,
       });
     }
   }, [user]);
@@ -105,10 +123,10 @@ function EditProfilePartner() {
             height="400px"
             id="gmap_canvas"
             src="https://maps.google.com/maps?q=Dumbways%20&t=&z=17&ie=UTF8&iwloc=&output=embed"
-            frameborder="0"
+            frameBorder="0"
             scrolling="no"
-            marginheight="0"
-            marginwidth="0"
+            marginHeight="0"
+            marginWidth="0"
             title="myFrame"
           ></iframe>
         </Modal.Body>
@@ -213,7 +231,10 @@ function EditProfilePartner() {
                 <Button
                   className="mb-3"
                   style={{ width: "30%", backgroundColor: "#433434" }}
-                  onClick={handleShow}
+                  onClick={() => {
+                    handleShow();
+                    getLocation();
+                  }}
                 >
                   Select On Map <img src={Map} alt="map"></img>
                 </Button>

@@ -1,6 +1,6 @@
 import Container from "react-bootstrap/Container";
 import Icon from "../assets/Icon.png";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";

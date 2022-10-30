@@ -20,6 +20,24 @@ function Cart({
 }) {
   const navigate = useNavigate();
 
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    }
+  }
+
+  const [mapLong, setMapLong] = useState();
+  const [mapLat, setMapLat] = useState();
+
+  function showPosition(position) {
+    const long = position.coords.longitude;
+    const lat = position.coords.latitude;
+    setMapLong(long);
+    setMapLat(lat);
+  }
+
+  const mapLongLat = `${mapLong}, ${mapLat}`;
+
   const navigateHome = () => {
     navigate("/");
   };
@@ -53,10 +71,11 @@ function Cart({
     adminID = items[0].admin_id;
   }
 
-  const [form, setForm] = useState({
-    value: cartTotal,
+  const [form] = useState({
+    value: cartTotal + 10000,
     product: titleString,
     admin_id: adminID,
+    location: mapLongLat
   });
 
   const handleSubmit = async (e) => {
@@ -131,6 +150,8 @@ function Cart({
                     aria-label="Recipient's location"
                     aria-describedby="basic-addon2"
                     className="py-2"
+                    type="text"
+                    value={mapLongLat}
                   />
                   <Button
                     style={{
@@ -138,7 +159,10 @@ function Cart({
                       backgroundColor: "#433434",
                       border: "none",
                     }}
-                    onClick={handleShow}
+                    onClick={() => {
+                      handleShow();
+                      getLocation();
+                    }}
                   >
                     Select on map <img src={Map} alt="map"></img>
                   </Button>
@@ -201,7 +225,10 @@ function Cart({
                         <div className="d-flex align-items-center justify-content-end">
                           <div>
                             <p className="text-danger">
-                            {toRupiah(item.quantity * item.price, { dot: ",", floatingPoint: 0 })}
+                              {toRupiah(item.quantity * item.price, {
+                                dot: ",",
+                                floatingPoint: 0,
+                              })}
                             </p>
                             <img
                               src={Bin}
@@ -239,7 +266,9 @@ function Cart({
                       <p>Ongkir</p>
                     </div>
                     <div style={{ textAlign: "right" }}>
-                      <p className="text-danger">{toRupiah(cartTotal, { dot: ",", floatingPoint: 0 })}</p>
+                      <p className="text-danger">
+                        {toRupiah(cartTotal, { dot: ",", floatingPoint: 0 })}
+                      </p>
                       <p>{totalItems}</p>
                       <p className="text-danger">Rp10.000</p>
                     </div>
@@ -247,7 +276,12 @@ function Cart({
                   <hr style={{ marginTop: "-3px", opacity: "100%" }}></hr>
                   <div className="d-flex justify-content-between">
                     <p className="text-danger">Total</p>
-                    <p className="text-danger">{toRupiah(cartTotal+10000, { dot: ",", floatingPoint: 0 })}</p>
+                    <p className="text-danger">
+                      {toRupiah(cartTotal + 10000, {
+                        dot: ",",
+                        floatingPoint: 0,
+                      })}
+                    </p>
                   </div>
                 </div>
               </div>
