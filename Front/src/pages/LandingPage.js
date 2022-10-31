@@ -62,6 +62,8 @@ function Page() {
     try {
       e.preventDefault();
 
+      const response = await API.post("/register", form);
+
       const alert = <Alert variant="success">Berhasil register!</Alert>;
 
       setMessage(alert);

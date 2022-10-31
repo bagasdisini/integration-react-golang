@@ -43,12 +43,12 @@ function Navigation({ totalItems, emptyCart }) {
   const navigateAddProduct = () => {
     navigate("/add-product");
   };
-
-  const [state, dispatch] = useContext(UserContext);
-
+  
   const navigateProfile = () => {
     navigate(`/my-profile`);
   };
+
+  const [state, dispatch] = useContext(UserContext);
 
   const [message, setMessage] = useState(null);
 
