@@ -75,7 +75,7 @@ function Cart({
     value: cartTotal + 10000,
     product: titleString,
     admin_id: adminID,
-    location: mapLongLat
+    location: mapLongLat,
   });
 
   const handleSubmit = async (e) => {
@@ -140,7 +140,7 @@ function Cart({
           style={{ marginTop: "10px" }}
         >
           <div className="m-5" style={{ width: "90%" }}>
-            <h3 className="fw-bold mb-4">Geprek Bensu</h3>
+            <h3 className="fw-bold mb-4">My Cart</h3>
             <div>
               <p>Delivery Location</p>
               <div className="mb-4">

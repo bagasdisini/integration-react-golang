@@ -88,7 +88,7 @@ function Transaction() {
                   </tr>
                 </thead>
                 <tbody style={{ backgroundColor: "white" }}>
-                  {transactions?.map((p) => (
+                  {transactions?.map((p, index) => (
                     <tr>
                       <td
                         style={{
@@ -99,7 +99,7 @@ function Transaction() {
                         }}
                         key={p.id}
                       >
-                        {p.id}
+                        {index + 1}
                       </td>
                       <td
                         style={{
@@ -124,32 +124,29 @@ function Transaction() {
                         {toRupiah(p.value, { dot: ",", floatingPoint: 0 })}
                       </td>
 
-                        {p.status == "Pending"?
+                      {p.status == "Pending" ? (
                         <td
-                        style={{
-                          wordBreak: "break-all",
-                          width: "10%",
-                          textAlign: "center",
-                          verticalAlign: "middle",
-                        }}
-                      >
-                         <span className="text-warning">{p.status}</span>
-                      </td>
-
-                      :
-                       <td
-                       style={{
-                         wordBreak: "break-all",
-                         width: "10%",
-                         textAlign: "center",
-                         verticalAlign: "middle",
-                       }}
-                     >
-                       <span style={{color: "green"}}>{p.status}</span>
-                     </td>
-                      }
-                     
-
+                          style={{
+                            wordBreak: "break-all",
+                            width: "10%",
+                            textAlign: "center",
+                            verticalAlign: "middle",
+                          }}
+                        >
+                          <span className="text-warning">{p.status}</span>
+                        </td>
+                      ) : (
+                        <td
+                          style={{
+                            wordBreak: "break-all",
+                            width: "10%",
+                            textAlign: "center",
+                            verticalAlign: "middle",
+                          }}
+                        >
+                          <span style={{ color: "green" }}>{p.status}</span>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
