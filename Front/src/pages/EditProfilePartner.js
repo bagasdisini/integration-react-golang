@@ -1,5 +1,5 @@
 import Container from "react-bootstrap/Container";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
@@ -10,6 +10,7 @@ import { useQuery } from "react-query";
 import { API } from "../config/api";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
 
 function EditProfilePartner() {
   const [state, dispatch] = useContext(UserContext);
@@ -21,23 +22,27 @@ function EditProfilePartner() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  function getLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
-    }
-  }
+  const style = {
+    height: "500px",
+    width: "100%",
+  };
 
-  const [mapLong, setMapLong] = useState();
-  const [mapLat, setMapLat] = useState();
+  const [draggable] = useState(true);
+  const [position, setPosition] = useState([-6.3818149, 106.7495821]);
+  const markerRef = useRef(null);
+  const eventHandlers = useMemo(
+    () => ({
+      dragend() {
+        const marker = markerRef.current;
+        if (marker != null) {
+          setPosition(marker.getLatLng());
+        }
+      },
+    }),
+    []
+  );
 
-  function showPosition(position) {
-    const long = position.coords.longitude;
-    const lat = position.coords.latitude;
-    setMapLong(long);
-    setMapLat(lat);
-  }
-
-  const mapLongLat = `${mapLong}, ${mapLat}`;
+  var positionStr = `${position.lat}, ${position.lng}`
 
   useEffect(() => {
     document.title = "Edit Profile Partner";
@@ -48,7 +53,7 @@ function EditProfilePartner() {
     image: "",
     email: "",
     phone: "",
-    location: "",
+    location: positionStr,
   });
 
   const idid = state?.user.id;
@@ -66,7 +71,7 @@ function EditProfilePartner() {
         email: user.email,
         image: user.image,
         phone: user.phone,
-        location: mapLongLat,
+        location: positionStr,
       });
     }
   }, [user]);
@@ -95,7 +100,7 @@ function EditProfilePartner() {
       formData.set("fullName", form.fullName);
       formData.set("email", form.email);
       formData.set("phone", form.phone);
-      formData.set("location", form.location);
+      formData.set("location", positionStr);
 
       const response = await API.patch(`/admin/${idid}`, formData);
 
@@ -116,19 +121,22 @@ function EditProfilePartner() {
 
   return (
     <div>
-      <Modal show={show} onHide={handleClose} size="lg">
+       <Modal show={show} onHide={handleClose} size="lg" id="map">
         <Modal.Body>
-          <iframe
-            width="100%"
-            height="400px"
-            id="gmap_canvas"
-            src="https://maps.google.com/maps?q=Dumbways%20&t=&z=17&ie=UTF8&iwloc=&output=embed"
-            frameBorder="0"
-            scrolling="no"
-            marginHeight="0"
-            marginWidth="0"
-            title="myFrame"
-          ></iframe>
+          <MapContainer center={position} zoom={50} style={style}>
+            <TileLayer
+              url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            <Marker
+              draggable={draggable}
+              eventHandlers={eventHandlers}
+              position={position}
+              ref={markerRef}
+            >
+              <Tooltip permanent>{positionStr}</Tooltip>
+            </Marker>
+          </MapContainer>
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -222,7 +230,7 @@ function EditProfilePartner() {
                   <Form.Control
                     placeholder="Location"
                     aria-label="Location"
-                    value={form.location}
+                    value={positionStr}
                     aria-describedby="basic-addon1"
                     name="location"
                     onChange={handleChange}
@@ -233,7 +241,6 @@ function EditProfilePartner() {
                   style={{ width: "30%", backgroundColor: "#433434" }}
                   onClick={() => {
                     handleShow();
-                    getLocation();
                   }}
                 >
                   Select On Map <img src={Map} alt="map"></img>

@@ -1,14 +1,17 @@
-import Map from "../assets/map.png";
+import Map1 from "../assets/map.png";
 import Bin from "../assets/bin.png";
 import Container from "react-bootstrap/Container";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
+import icon from "leaflet/dist/images/marker-icon.png";
+import L from "leaflet";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
 import { API } from "../config/api";
 import toRupiah from "@develoka/angka-rupiah-js";
+import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
 
 function Cart({
   items,
@@ -20,23 +23,27 @@ function Cart({
 }) {
   const navigate = useNavigate();
 
-  function getLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
-    }
-  }
+  const style = {
+    height: "500px",
+    width: "100%",
+  };
 
-  const [mapLong, setMapLong] = useState();
-  const [mapLat, setMapLat] = useState();
+  const [draggable] = useState(true);
+  const [position, setPosition] = useState([-6.3818149, 106.7495821]);
+  const markerRef = useRef(null);
+  const eventHandlers = useMemo(
+    () => ({
+      dragend() {
+        const marker = markerRef.current;
+        if (marker != null) {
+          setPosition(marker.getLatLng());
+        }
+      },
+    }),
+    []
+  );
 
-  function showPosition(position) {
-    const long = position.coords.longitude;
-    const lat = position.coords.latitude;
-    setMapLong(long);
-    setMapLat(lat);
-  }
-
-  const mapLongLat = `${mapLong}, ${mapLat}`;
+  var positionStr = `${position.lat}, ${position.lng}`
 
   const navigateHome = () => {
     navigate("/");
@@ -75,7 +82,7 @@ function Cart({
     value: cartTotal + 10000,
     product: titleString,
     admin_id: adminID,
-    location: mapLongLat,
+    location: `${position.lat}, ${position.lng}`,
   });
 
   const handleSubmit = async (e) => {
@@ -96,19 +103,22 @@ function Cart({
 
   return (
     <div>
-      <Modal show={show} onHide={handleClose} size="lg">
+      <Modal show={show} onHide={handleClose} size="lg" id="map">
         <Modal.Body>
-          <iframe
-            width="100%"
-            height="400px"
-            id="gmap_canvas"
-            src="https://maps.google.com/maps?q=Dumbways%20&t=&z=17&ie=UTF8&iwloc=&output=embed"
-            frameborder="0"
-            scrolling="no"
-            marginheight="0"
-            marginwidth="0"
-            title="myFrame"
-          ></iframe>
+          <MapContainer center={position} zoom={50} style={style}>
+            <TileLayer
+              url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            <Marker
+              draggable={draggable}
+              eventHandlers={eventHandlers}
+              position={position}
+              ref={markerRef}
+            >
+              <Tooltip permanent>{positionStr}</Tooltip>
+            </Marker>
+          </MapContainer>
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -151,7 +161,7 @@ function Cart({
                     aria-describedby="basic-addon2"
                     className="py-2"
                     type="text"
-                    value={mapLongLat}
+                    value={`${position.lat}, ${position.lng}`}
                   />
                   <Button
                     style={{
@@ -161,10 +171,9 @@ function Cart({
                     }}
                     onClick={() => {
                       handleShow();
-                      getLocation();
                     }}
                   >
-                    Select on map <img src={Map} alt="map"></img>
+                    Select on map <img src={Map1} alt="map"></img>
                   </Button>
                 </InputGroup>
               </div>
@@ -332,5 +341,11 @@ function Cart({
     </div>
   );
 }
+
+let defaultIcon = L.icon({
+  iconUrl: icon,
+});
+
+L.Marker.prototype.options.icon = defaultIcon;
 
 export default Cart;

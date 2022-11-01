@@ -47,8 +47,6 @@ function ProfilePartner() {
     return response2;
   });
 
-  console.log(products);
-
   const deleteById = async (id) => {
     try {
       await API.delete(`/product/${id}`);
